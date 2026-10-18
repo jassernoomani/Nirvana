@@ -1,3 +1,6 @@
+import datetime as dt
+import re
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator  # type: ignore[reportMissingImports]
 
 
@@ -97,3 +100,51 @@ class Order(BaseModel):
     total: float
     created_at: str
     items: list[OrderLine]
+
+
+class ReservationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    date: dt.date
+    time: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    party_size: int = Field(ge=1, le=20)
+    contact_phone: str | None = Field(default=None, max_length=30)
+    notes: str | None = Field(default=None, max_length=300)
+
+    @field_validator("contact_phone", "notes", mode="before")
+    @classmethod
+    def blank_to_none(cls, value):
+        if isinstance(value, str):
+            value = value.strip()
+            return value or None
+        return value
+
+    @field_validator("contact_phone")
+    @classmethod
+    def phone_digits(cls, value):
+        if value is not None and not re.fullmatch(r"\+?[0-9 ().-]{6,30}", value):
+            raise ValueError("Enter a valid phone number (digits, spaces and + only)")
+        return value
+
+
+class Reservation(BaseModel):
+    id: int
+    reserved_for: str
+    party_size: int
+    status: str
+    table_label: str | None
+    contact_phone: str | None
+    notes: str | None
+    created_at: str
+
+
+class Slot(BaseModel):
+    time: str
+    available: bool
+
+
+class Availability(BaseModel):
+    date: dt.date
+    party_size: int
+    duration_minutes: int
+    max_party_size: int
+    slots: list[Slot]

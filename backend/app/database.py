@@ -178,3 +178,6 @@ def initialize_database() -> None:
         connection.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_reference ON orders(reference)")
         connection.execute(
             "CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_idempotency ON orders(user_id, idempotency_key)")
+        reservation_columns = {row["name"] for row in connection.execute("PRAGMA table_info(reservations)")}
+        if "contact_phone" not in reservation_columns:
+            connection.execute("ALTER TABLE reservations ADD COLUMN contact_phone TEXT")

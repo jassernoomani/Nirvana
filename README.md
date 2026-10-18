@@ -4,6 +4,7 @@ Desktop restaurant web application built with Angular, FastAPI, and SQLite.
 
 - Customer menu: browse dishes, filter categories, view details, and build a cart.
 - Checkout: customers confirm their cart to place an order, then see the confirmation and their order history.
+- Reservations: customers book a table for a date, time and party size, see their reservations and cancel upcoming ones.
 - Staff dashboard: create and edit dishes, manage availability, and delete dishes.
 - Accounts: sign-up for customers, sign-in and sign-out, with customer and staff roles enforced by the API.
 - Includes 27 sample dishes across 7 categories, each with a local illustration, a recipe and allergens.

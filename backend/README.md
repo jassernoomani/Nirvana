@@ -42,6 +42,30 @@ Checkout rules, enforced on the server:
 - The order, its items and the stock deductions are written in one transaction, which takes the database write lock first (`BEGIN IMMEDIATE`), so concurrent checkouts cannot oversell.
 - New orders start with status `pending` (shown as "Received") and get a public reference such as `NV-8E77RR3D`.
 
+Reservation routes:
+
+- `GET /api/reservations/availability?date=YYYY-MM-DD&party_size=N` (public): each seating time of that day and whether a table is free.
+- `POST /api/reservations` (customers only): books `date`, `time` (`HH:MM`), `party_size`, and optional `contact_phone` and `notes`. Returns 201 with the confirmed reservation and its table.
+- `GET /api/reservations` (customers only): the signed-in customer's reservations.
+- `POST /api/reservations/{id}/cancel` (customers only): cancels an upcoming confirmed reservation. Another customer's reservation returns 404.
+
+Booking rules and assumptions. The project did not define these, so they follow the demo data and are configurable with environment variables:
+
+| Rule | Default | Variable |
+|---|---|---|
+| A seating holds its table for | 120 minutes | `RESERVATION_SEATING_MINUTES` |
+| Seating times | 12:00–14:00 and 19:00–21:00 | `RESERVATION_SERVICES` (e.g. `12:00-14:00,19:00-21:00`) |
+| Interval between seating times | 30 minutes | `RESERVATION_SLOT_INTERVAL_MINUTES` |
+| Minimum notice | 60 minutes | `RESERVATION_MIN_NOTICE_MINUTES` |
+| Bookable ahead | 60 days | `RESERVATION_MAX_DAYS_AHEAD` |
+
+- Capacity comes from `restaurant_tables` (12 tables of 2 to 8 seats in the demo data). Each booking gets the smallest table that seats the party and has no active booking within one seating duration. Tables are not combined, so the largest party bookable online is the largest table (8); larger groups are asked to contact the restaurant.
+- A customer cannot hold two active reservations that overlap.
+- The server checks availability inside a transaction that takes the write lock first, so two simultaneous requests cannot get the same table.
+- Statuses: a booking is confirmed immediately when a table is free (`booked`, shown as Confirmed), otherwise it is refused, so there is no pending state. `cancelled` frees the table. `seated`, `completed` and `no_show` are for staff and already exist in the data model; no staff reservation screen exists yet.
+- Times are the restaurant's local time, the same as the server's clock.
+- Contact details are the account's name and email, plus an optional phone number stored with the reservation.
+
 Menu routes (reading is public; creating, changing and deleting require staff):
 
 - `GET /api/menu`: returns a list. Supports `category`, `available`, `search`, `min_price`, `max_price`, `vegetarian`, `sort` (name, price, category, id), `direction` (asc, desc), `limit` (1–100, default 100), and `offset`.
