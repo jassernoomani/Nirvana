@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Dish, MenuService } from './menu.service';
 import { AuthService } from './auth.service';
+import { CartService } from './cart.service';
 import { DialogFocusDirective } from './dialog-focus';
 
-interface CartLine {dish: Dish; quantity: number;}
 
 @Component({selector: 'customer-menu', standalone: true, imports: [CommonModule, FormsModule, RouterLink, DialogFocusDirective], templateUrl: './customer.html', styleUrl: './customer.css'})
 export class CustomerComponent {
@@ -20,7 +20,9 @@ export class CustomerComponent {
   error = signal('');
   search = signal(''); category = signal(''); vegetarian = signal(false); sort = signal('name');
   page = signal(1); readonly pageSize = 9;
-  cart = signal<CartLine[]>([]);
+  private cartService = inject(CartService);
+  private router = inject(Router);
+  cart = this.cartService.lines;
   cartOpen = signal(false);
   detail = signal<Dish | null>(null);
   notice = signal('');
@@ -31,8 +33,8 @@ export class CustomerComponent {
   });
   visible = computed(() => this.filtered().slice((this.page() - 1) * this.pageSize, this.page() * this.pageSize));
   pageCount = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize)));
-  cartCount = computed(() => this.cart().reduce((n,line) => n + line.quantity, 0));
-  total = computed(() => this.cart().reduce((n,line) => n + Math.round(line.dish.price * 100) * line.quantity, 0) / 100);
+  cartCount = this.cartService.count;
+  total = this.cartService.total;
 
   constructor() {this.load(); this.auth.ready();}
   firstName(fullName: string) {return fullName.split(' ')[0];}
@@ -48,17 +50,18 @@ export class CustomerComponent {
   }
   private loaded(items: Dish[]) {
     this.dishes.set(items); this.loading.set(false); this.page.set(1);
-    this.cart.update(lines => lines.flatMap(line => {const dish = items.find(d => d.id === line.dish.id && d.is_available); return dish ? [{dish, quantity: line.quantity}] : [];}));
+    this.cartService.sync(items);
   }
   private failed() {this.loading.set(false); this.error.set('Our menu is temporarily unavailable. Please try again in a moment.');}
   filter() {this.page.set(1);}
   reset() {this.search.set(''); this.category.set(''); this.vegetarian.set(false); this.sort.set('name'); this.filter();}
-  quantity(id: number) {return this.cart().find(line => line.dish.id === id)?.quantity ?? 0;}
-  add(dish: Dish) {
-    if (!dish.is_available || this.quantity(dish.id) >= 99) return;
-    this.cart.update(lines => lines.some(line => line.dish.id === dish.id) ? lines.map(line => line.dish.id === dish.id ? {...line, quantity: line.quantity + 1} : line) : [...lines, {dish, quantity: 1}]);
-    this.notice.set(`${dish.name} added to your cart.`);
+  quantity(id: number) {return this.cartService.quantity(id);}
+  add(dish: Dish) {if (this.cartService.add(dish)) this.notice.set(`${dish.name} added to your cart.`);}
+  decrease(id: number) {this.cartService.decrease(id);}
+  remove(id: number) {this.cartService.remove(id);}
+  /** Signed-out visitors sign in first; their cart is kept in the browser meanwhile. */
+  checkout() {
+    this.cartOpen.set(false);
+    this.router.navigate(this.auth.user() ? ['/checkout'] : ['/login'], this.auth.user() ? {} : {queryParams: {returnUrl: '/checkout'}});
   }
-  decrease(id: number) {this.cart.update(lines => lines.flatMap(line => line.dish.id !== id ? [line] : line.quantity > 1 ? [{...line, quantity: line.quantity - 1}] : []));}
-  remove(id: number) {this.cart.update(lines => lines.filter(line => line.dish.id !== id));}
 }

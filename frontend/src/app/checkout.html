@@ -1,0 +1,31 @@
+<div class="page">
+  <header class="page-header"><a class="page-brand" routerLink="/" aria-label="Restauration home"><span>r.</span>restauration<em>●</em></a><a class="page-link" routerLink="/">← Back to the menu</a></header>
+  <main class="page-main">
+    <div class="eyebrow">CHECKOUT</div>
+    <h1>Review your order.</h1>
+    @if (!cart.lines().length) {
+      <section class="page-card page-empty"><h2>Your cart is empty.</h2><p>Add a dish from the menu before checking out.</p><a class="page-primary" routerLink="/">Explore the menu</a></section>
+    } @else {
+      <section class="page-card">
+        <table class="order-table">
+          <thead><tr><th>Dish</th><th class="num">Unit price</th><th class="num">Quantity</th><th class="num">Total</th><th><span class="visually-hidden">Remove</span></th></tr></thead>
+          <tbody>
+            @for (line of cart.lines(); track line.dish.id) {
+              <tr>
+                <td data-label="Dish">{{ line.dish.name }}</td>
+                <td class="num" data-label="Unit price">{{ line.dish.price | number:'1.2-2' }}</td>
+                <td class="num" data-label="Quantity"><span class="stepper"><button type="button" [attr.aria-label]="'Decrease quantity of ' + line.dish.name" [disabled]="placing()" (click)="cart.decrease(line.dish.id)">−</button><span>{{ line.quantity }}</span><button type="button" [attr.aria-label]="'Increase quantity of ' + line.dish.name" [disabled]="placing() || line.quantity >= max" (click)="cart.add(line.dish)">+</button></span></td>
+                <td class="num" data-label="Total">{{ line.dish.price * line.quantity | number:'1.2-2' }}</td>
+                <td class="num"><button type="button" class="page-text-button" [disabled]="placing()" (click)="cart.remove(line.dish.id)">Remove</button></td>
+              </tr>
+            }
+          </tbody>
+          <tfoot><tr><td colspan="3">Subtotal ({{ cart.count() }} {{ cart.count() === 1 ? 'item' : 'items' }})</td><td class="num">{{ cart.total() | number:'1.2-2' }}</td><td></td></tr></tfoot>
+        </table>
+        <p class="page-note">The final total is calculated by the restaurant when you confirm. No payment is taken online.</p>
+        @if (error()) {<div class="page-error" role="alert">{{ error() }}</div>}
+        <div class="page-actions"><a class="page-secondary" routerLink="/">Add more dishes</a><button class="page-primary" type="button" [disabled]="placing()" (click)="confirm()">{{ placing() ? 'Placing your order…' : 'Confirm order' }}</button></div>
+      </section>
+    }
+  </main>
+</div>

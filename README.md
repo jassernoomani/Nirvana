@@ -3,6 +3,7 @@
 Desktop restaurant web application built with Angular, FastAPI, and SQLite.
 
 - Customer menu: browse dishes, filter categories, view details, and build a cart.
+- Checkout: customers confirm their cart to place an order, then see the confirmation and their order history.
 - Staff dashboard: create and edit dishes, manage availability, and delete dishes.
 - Accounts: sign-up for customers, sign-in and sign-out, with customer and staff roles enforced by the API.
 - Includes 27 sample dishes across 7 categories, each with a local illustration, a recipe and allergens.
@@ -62,9 +63,9 @@ The Angular development server proxies API requests to port 8000. See the backen
 ```powershell
 cd backend
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m unittest test_menu test_data_model test_auth -v
+.\.venv\Scripts\python.exe -m unittest discover -p "test_*.py" -v
 ```
 
 From frontend, run `npm.cmd run build` for a production build.
 
-The cart is a UI preview: order submission and payment are not implemented. The SQLite database is generated locally by the seed script; it and local environments are excluded from Git.
+Online payment is not implemented: orders are placed without payment. The SQLite database is generated locally by the seed script; it and local environments are excluded from Git.

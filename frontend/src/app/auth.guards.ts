@@ -12,6 +12,14 @@ export const staffGuard: CanActivateFn = async (_route, state) => {
   return user.role === 'staff' ? true : router.createUrlTree(['/forbidden']);
 };
 
+/** Customer-only pages such as checkout; staff go back to their workspace. */
+export const customerGuard: CanActivateFn = async (_route, state) => {
+  const auth = inject(AuthService); const router = inject(Router);
+  const user = await auth.ready();
+  if (!user) return router.createUrlTree(['/login'], {queryParams: {returnUrl: state.url}});
+  return user.role === 'customer' ? true : router.createUrlTree([auth.home(user)]);
+};
+
 /** Pages for any signed-in user. */
 export const signedInGuard: CanActivateFn = async (_route, state) => {
   const auth = inject(AuthService); const router = inject(Router);

@@ -99,7 +99,9 @@ SCHEMA = [
             CHECK (status IN ('pending', 'preparing', 'ready', 'served', 'cancelled')),
         total REAL NOT NULL CHECK (total >= 0),
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        completed_at TEXT
+        completed_at TEXT,
+        reference TEXT,
+        idempotency_key TEXT
     )
     """,
     """
@@ -167,3 +169,12 @@ def initialize_database() -> None:
         connection.execute("CREATE INDEX IF NOT EXISTS idx_menu_category ON menu_items(category)")
         for statement in SCHEMA:
             connection.execute(statement)
+        # Columns added to orders after the first data-model release.
+        order_columns = {row["name"] for row in connection.execute("PRAGMA table_info(orders)")}
+        for name in ("reference", "idempotency_key"):
+            if name not in order_columns:
+                connection.execute(f"ALTER TABLE orders ADD COLUMN {name} TEXT")
+        connection.execute("UPDATE orders SET reference = 'NV-' || upper(hex(randomblob(4))) WHERE reference IS NULL")
+        connection.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_reference ON orders(reference)")
+        connection.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_idempotency ON orders(user_id, idempotency_key)")

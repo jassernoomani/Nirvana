@@ -1,0 +1,33 @@
+<div class="page">
+  <header class="page-header"><a class="page-brand" routerLink="/" aria-label="Restauration home"><span>r.</span>restauration<em>●</em></a><a class="page-link" routerLink="/orders">My orders</a></header>
+  <main class="page-main">
+    @if (order(); as order) {
+      @if (justPlaced) {
+        <div class="page-success" role="status"><strong>Thank you, your order is in.</strong> The kitchen has received it. Keep your reference handy: <strong>{{ order.reference }}</strong>.</div>
+      }
+      <div class="eyebrow">ORDER {{ order.reference }}</div>
+      <h1>{{ justPlaced ? 'Order confirmed.' : 'Order details.' }}</h1>
+      <section class="page-card">
+        <dl class="order-facts">
+          <div><dt>Reference</dt><dd>{{ order.reference }}</dd></div>
+          <div><dt>Placed</dt><dd>{{ date(order.created_at) | date:'d MMM y, HH:mm' }}</dd></div>
+          <div><dt>Status</dt><dd><span class="status" [attr.data-status]="order.status">{{ labels[order.status] ?? order.status }}</span></dd></div>
+        </dl>
+        <table class="order-table">
+          <thead><tr><th>Dish</th><th class="num">Unit price</th><th class="num">Quantity</th><th class="num">Total</th></tr></thead>
+          <tbody>
+            @for (item of order.items; track item.menu_item_id) {
+              <tr><td data-label="Dish">{{ item.name }}</td><td class="num" data-label="Unit price">{{ item.unit_price | number:'1.2-2' }}</td><td class="num" data-label="Quantity">{{ item.quantity }}</td><td class="num" data-label="Total">{{ item.line_total | number:'1.2-2' }}</td></tr>
+            }
+          </tbody>
+          <tfoot><tr><td colspan="3">Total</td><td class="num">{{ order.total | number:'1.2-2' }}</td></tr></tfoot>
+        </table>
+        <div class="page-actions"><a class="page-secondary" routerLink="/orders">All my orders</a><a class="page-primary" routerLink="/">Back to the menu</a></div>
+      </section>
+    } @else if (error()) {
+      <section class="page-card page-empty" role="alert"><h2>Order unavailable.</h2><p>{{ error() }}</p><a class="page-primary" routerLink="/orders">See my orders</a></section>
+    } @else {
+      <p class="page-loading" role="status">Loading your order…</p>
+    }
+  </main>
+</div>

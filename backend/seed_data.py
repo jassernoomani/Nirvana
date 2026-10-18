@@ -19,6 +19,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 
 from app import database
+from app.routers.orders import make_reference
 from app.security import hash_password
 
 # Test value shared by every seeded account; see README "Demo accounts".
@@ -287,8 +288,9 @@ def build(connection: sqlite3.Connection, days: int = 90, rng_seed: int = 2026, 
         if status == "served":
             completed = created + timedelta(minutes=max(dishes[d]["minutes"] for d in lines) + rng.randint(5, 20))
         order_id = connection.execute(
-            "INSERT INTO orders (user_id, status, total, created_at, completed_at) VALUES (?, ?, ?, ?, ?)",
-            (customer and customer["id"], status, total, fmt(created), completed and fmt(completed))).lastrowid
+            "INSERT INTO orders (user_id, status, total, created_at, completed_at, reference) VALUES (?, ?, ?, ?, ?, ?)",
+            (customer and customer["id"], status, total, fmt(created), completed and fmt(completed),
+             make_reference(rng.choice))).lastrowid
         connection.executemany("INSERT INTO order_items VALUES (?, ?, ?, ?)",
                                [(order_id, d, q, dishes[d]["price"]) for d, q in lines.items()])
         return order_id, completed
