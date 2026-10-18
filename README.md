@@ -2,6 +2,8 @@
 
 Desktop restaurant web application built with Angular, FastAPI, and SQLite.
 
+Local intelligence modules are now available: customer recommendations at `/recommendations`, and staff demand forecasting / review analysis at `/admin/intelligence`. See [AI_MODULES.md](AI_MODULES.md) for setup and methodology, and [AI_PROMPTS.md](AI_PROMPTS.md) for the exact local-model prompts. Configured local model: `qwen2.5:3b` through Ollama; forecasting uses scikit-learn.
+
 - Customer menu: browse dishes, filter categories, view details, and build a cart.
 - Checkout: customers confirm their cart to place an order, then see the confirmation and their order history.
 - Staff dashboard: create and edit dishes, manage availability, and delete dishes.

@@ -169,6 +169,13 @@ def initialize_database() -> None:
         connection.execute("CREATE INDEX IF NOT EXISTS idx_menu_category ON menu_items(category)")
         for statement in SCHEMA:
             connection.execute(statement)
+        connection.execute('''CREATE TABLE IF NOT EXISTS ai_review_analysis (
+            review_id INTEGER NOT NULL REFERENCES reviews(id) ON DELETE CASCADE,
+            content_hash TEXT NOT NULL,
+            model_key TEXT NOT NULL,
+            payload TEXT NOT NULL,
+            PRIMARY KEY (review_id, content_hash, model_key)
+        )''')
         # Columns added to orders after the first data-model release.
         order_columns = {row["name"] for row in connection.execute("PRAGMA table_info(orders)")}
         for name in ("reference", "idempotency_key"):
