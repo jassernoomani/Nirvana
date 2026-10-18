@@ -11,6 +11,7 @@ import { CheckoutComponent } from './app/checkout';
 import { OrderComponent } from './app/order';
 import { OrdersComponent } from './app/orders';
 import { ReservationsComponent } from './app/reservations';
+import { InventoryComponent } from './app/inventory';
 import { customerGuard, guestGuard, sessionInterceptor, signedInGuard, staffGuard } from './app/auth.guards';
 
 @Component({selector: 'app-root', standalone: true, imports: [RouterOutlet], template: '<router-outlet />'})
@@ -20,6 +21,7 @@ bootstrapApplication(RootComponent, {providers: [provideHttpClient(withIntercept
   {path: '', component: CustomerComponent, title: 'Restauration · Fresh from our kitchen'},
   {path: 'login', component: LoginComponent, canActivate: [guestGuard], title: 'Restauration · Sign in'},
   {path: 'admin', component: AppComponent, canActivate: [staffGuard], title: 'Restauration · Menu studio'},
+  {path: 'admin/inventory', component: InventoryComponent, canActivate: [staffGuard], title: 'Restauration · Inventory'},
   {path: 'checkout', component: CheckoutComponent, canActivate: [customerGuard], title: 'Restauration · Checkout'},
   {path: 'orders', component: OrdersComponent, canActivate: [customerGuard], title: 'Restauration · My orders'},
   {path: 'orders/:reference', component: OrderComponent, canActivate: [signedInGuard], title: 'Restauration · Order'},

@@ -66,6 +66,15 @@ Booking rules and assumptions. The project did not define these, so they follow 
 - Times are the restaurant's local time, the same as the server's clock.
 - Contact details are the account's name and email, plus an optional phone number stored with the reservation.
 
+Inventory routes (all staff only):
+
+- `GET /api/inventory`: every ingredient with its unit, stock, minimum level (`reorder_level`), status (`ok`, `low` below the minimum, `out` at zero) and the dishes that use it.
+- `POST /api/inventory/{id}/adjust`: adds or removes stock with `change` (positive or negative), `reason` (`delivery` must add, `waste` must remove, `correction` either way) and an optional `note`.
+- `PUT /api/inventory/{id}`: sets the counted `stock_quantity` (a stocktake) and/or the `reorder_level`.
+- `GET /api/inventory/{id}/movements`: the 50 most recent stock changes.
+
+Stock is tracked per ingredient, because dishes are made from recipes. Stock can never go below zero: removals use a conditional update that checks and changes the quantity in one statement, and orders deduct stock inside their checkout transaction. Every change is written to `stock_movements` with the quantity, the quantity afterwards, the reason, an optional note, the time, and the staff member, or the order reference for automatic deductions. History starts when this feature is installed; the seeded stock levels have no history.
+
 Menu routes (reading is public; creating, changing and deleting require staff):
 
 - `GET /api/menu`: returns a list. Supports `category`, `available`, `search`, `min_price`, `max_price`, `vegetarian`, `sort` (name, price, category, id), `direction` (asc, desc), `limit` (1–100, default 100), and `offset`.
@@ -93,6 +102,7 @@ Startup performs an additive, repeatable SQLite migration that also creates the 
 | `user_allergies`, `user_favorite_categories` | Customer dietary profile used by recommendations |
 | `orders`, `order_items` | Orders with status (pending, preparing, ready, served, cancelled) and the price paid per item |
 | `reviews` | Rating (1–5) and comment, optionally linked to an order |
+| `stock_movements` | Every stock change: quantity, reason, note, staff member or order, time |
 | `restaurant_tables`, `reservations` | Tables with seat counts and bookings |
 
 Foreign keys are enforced. A dish that appears in past orders cannot be deleted (409); mark it unavailable instead.

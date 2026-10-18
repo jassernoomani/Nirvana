@@ -1,5 +1,6 @@
 import datetime as dt
 import re
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator  # type: ignore[reportMissingImports]
 
@@ -148,3 +149,40 @@ class Availability(BaseModel):
     duration_minutes: int
     max_party_size: int
     slots: list[Slot]
+
+
+class StockAdjustment(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    # Positive adds stock, negative removes it.
+    change: float = Field(ge=-1_000_000, le=1_000_000)
+    reason: Literal["delivery", "correction", "waste"]
+    note: str | None = Field(default=None, max_length=200)
+
+
+class StockUpdate(BaseModel):
+    """Set the counted quantity (stocktake) and/or the minimum threshold."""
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    stock_quantity: float | None = Field(default=None, ge=0, le=1_000_000)
+    reorder_level: float | None = Field(default=None, ge=0, le=1_000_000)
+    note: str | None = Field(default=None, max_length=200)
+
+
+class InventoryItem(BaseModel):
+    id: int
+    name: str
+    unit: str
+    stock_quantity: float
+    reorder_level: float
+    status: Literal["ok", "low", "out"]
+    used_in: list[str]
+
+
+class StockMovement(BaseModel):
+    id: int
+    change: float
+    quantity_after: float
+    reason: str
+    note: str | None
+    staff_name: str | None
+    order_reference: str | None
+    created_at: str

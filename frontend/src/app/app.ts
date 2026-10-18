@@ -6,10 +6,10 @@ import { Subject, catchError, of, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Dish, DishInput, MenuService } from './menu.service';
 import { DialogFocusDirective } from './dialog-focus';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
 
-@Component({selector: 'app-root', standalone: true, imports: [CommonModule, FormsModule, DialogFocusDirective], templateUrl: './app.html'})
+@Component({selector: 'app-root', standalone: true, imports: [CommonModule, FormsModule, RouterLink, DialogFocusDirective], templateUrl: './app.html'})
 export class AppComponent {
   private api = inject(MenuService);
   private destroy = inject(DestroyRef);

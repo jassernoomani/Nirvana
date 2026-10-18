@@ -123,6 +123,20 @@ SCHEMA = [
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
     """,
+    """
+    CREATE TABLE IF NOT EXISTS stock_movements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ingredient_id INTEGER NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
+        change REAL NOT NULL,
+        quantity_after REAL NOT NULL CHECK (quantity_after >= 0),
+        reason TEXT NOT NULL CHECK (reason IN ('delivery', 'correction', 'waste', 'count', 'order')),
+        note TEXT,
+        staff_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_stock_movements_ingredient ON stock_movements(ingredient_id, created_at)",
     "CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)",
     "CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at)",
     "CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)",
