@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status  # type:
 
 from app.auth import current_user, require_customer
 from app.database import get_connection
+from app.routers.inventory import record as record_movement
 from app.schemas import CheckoutRequest, Order
 
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
@@ -110,6 +111,7 @@ def place_order(body: CheckoutRequest, response: Response, user: dict = Depends(
                 (amount, ingredient, amount)).rowcount
             if not updated:  # Rolls back the whole order.
                 raise HTTPException(status_code=409, detail="Stock changed while placing your order. Please try again")
+            record_movement(connection, ingredient, -amount, "order", None, None, order_id)
         return load_orders(connection, "id = ?", (order_id,))[0]
 
 

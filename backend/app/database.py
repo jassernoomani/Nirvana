@@ -123,6 +123,20 @@ SCHEMA = [
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
     """,
+    """
+    CREATE TABLE IF NOT EXISTS stock_movements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ingredient_id INTEGER NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
+        change REAL NOT NULL,
+        quantity_after REAL NOT NULL CHECK (quantity_after >= 0),
+        reason TEXT NOT NULL CHECK (reason IN ('delivery', 'correction', 'waste', 'count', 'order')),
+        note TEXT,
+        staff_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_stock_movements_ingredient ON stock_movements(ingredient_id, created_at)",
     "CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)",
     "CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at)",
     "CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)",
@@ -185,3 +199,6 @@ def initialize_database() -> None:
         connection.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_reference ON orders(reference)")
         connection.execute(
             "CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_idempotency ON orders(user_id, idempotency_key)")
+        reservation_columns = {row["name"] for row in connection.execute("PRAGMA table_info(reservations)")}
+        if "contact_phone" not in reservation_columns:
+            connection.execute("ALTER TABLE reservations ADD COLUMN contact_phone TEXT")

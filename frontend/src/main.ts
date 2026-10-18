@@ -12,6 +12,8 @@ import { OrderComponent } from './app/order';
 import { OrdersComponent } from './app/orders';
 import { IntelligenceComponent } from './app/intelligence';
 import { RecommendationsComponent } from './app/recommendations';
+import { ReservationsComponent } from './app/reservations';
+import { InventoryComponent } from './app/inventory';
 import { customerGuard, guestGuard, sessionInterceptor, signedInGuard, staffGuard } from './app/auth.guards';
 
 @Component({selector: 'app-root', standalone: true, imports: [RouterOutlet], template: '<router-outlet />'})
@@ -23,9 +25,11 @@ bootstrapApplication(RootComponent, {providers: [provideHttpClient(withIntercept
   {path: 'admin', component: AppComponent, canActivate: [staffGuard], title: 'Restauration · Menu studio'},
   {path: 'admin/intelligence', component: IntelligenceComponent, canActivate: [staffGuard], title: 'Restauration · Restaurant intelligence'},
   {path: 'recommendations', component: RecommendationsComponent, canActivate: [customerGuard], title: 'Restauration · Picked for you'},
+  {path: 'admin/inventory', component: InventoryComponent, canActivate: [staffGuard], title: 'Restauration · Inventory'},
   {path: 'checkout', component: CheckoutComponent, canActivate: [customerGuard], title: 'Restauration · Checkout'},
   {path: 'orders', component: OrdersComponent, canActivate: [customerGuard], title: 'Restauration · My orders'},
   {path: 'orders/:reference', component: OrderComponent, canActivate: [signedInGuard], title: 'Restauration · Order'},
+  {path: 'reservations', component: ReservationsComponent, canActivate: [customerGuard], title: 'Restauration · Book a table'},
   {path: 'forbidden', component: ForbiddenComponent, canActivate: [signedInGuard], title: 'Restauration · Staff only'},
   {path: '**', redirectTo: ''}
 ])]}).catch(console.error);

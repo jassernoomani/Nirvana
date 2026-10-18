@@ -1,3 +1,7 @@
+import datetime as dt
+import re
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator  # type: ignore[reportMissingImports]
 
 
@@ -97,3 +101,88 @@ class Order(BaseModel):
     total: float
     created_at: str
     items: list[OrderLine]
+
+
+class ReservationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    date: dt.date
+    time: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    party_size: int = Field(ge=1, le=20)
+    contact_phone: str | None = Field(default=None, max_length=30)
+    notes: str | None = Field(default=None, max_length=300)
+
+    @field_validator("contact_phone", "notes", mode="before")
+    @classmethod
+    def blank_to_none(cls, value):
+        if isinstance(value, str):
+            value = value.strip()
+            return value or None
+        return value
+
+    @field_validator("contact_phone")
+    @classmethod
+    def phone_digits(cls, value):
+        if value is not None and not re.fullmatch(r"\+?[0-9 ().-]{6,30}", value):
+            raise ValueError("Enter a valid phone number (digits, spaces and + only)")
+        return value
+
+
+class Reservation(BaseModel):
+    id: int
+    reserved_for: str
+    party_size: int
+    status: str
+    table_label: str | None
+    contact_phone: str | None
+    notes: str | None
+    created_at: str
+
+
+class Slot(BaseModel):
+    time: str
+    available: bool
+
+
+class Availability(BaseModel):
+    date: dt.date
+    party_size: int
+    duration_minutes: int
+    max_party_size: int
+    slots: list[Slot]
+
+
+class StockAdjustment(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    # Positive adds stock, negative removes it.
+    change: float = Field(ge=-1_000_000, le=1_000_000)
+    reason: Literal["delivery", "correction", "waste"]
+    note: str | None = Field(default=None, max_length=200)
+
+
+class StockUpdate(BaseModel):
+    """Set the counted quantity (stocktake) and/or the minimum threshold."""
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    stock_quantity: float | None = Field(default=None, ge=0, le=1_000_000)
+    reorder_level: float | None = Field(default=None, ge=0, le=1_000_000)
+    note: str | None = Field(default=None, max_length=200)
+
+
+class InventoryItem(BaseModel):
+    id: int
+    name: str
+    unit: str
+    stock_quantity: float
+    reorder_level: float
+    status: Literal["ok", "low", "out"]
+    used_in: list[str]
+
+
+class StockMovement(BaseModel):
+    id: int
+    change: float
+    quantity_after: float
+    reason: str
+    note: str | None
+    staff_name: str | None
+    order_reference: str | None
+    created_at: str

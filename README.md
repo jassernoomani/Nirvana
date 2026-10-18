@@ -6,7 +6,9 @@ Local intelligence modules are now available: customer recommendations at `/reco
 
 - Customer menu: browse dishes, filter categories, view details, and build a cart.
 - Checkout: customers confirm their cart to place an order, then see the confirmation and their order history.
+- Reservations: customers book a table for a date, time and party size, see their reservations and cancel upcoming ones.
 - Staff dashboard: create and edit dishes, manage availability, and delete dishes.
+- Inventory (staff): ingredient stock with low-stock warnings, deliveries, adjustments, stock counts and a history of every change.
 - Accounts: sign-up for customers, sign-in and sign-out, with customer and staff roles enforced by the API.
 - Includes 27 sample dishes across 7 categories, each with a local illustration, a recipe and allergens.
 - A seed script generates 90 days of demo data: customers, orders, reviews, reservations and ingredient stock.
@@ -36,6 +38,7 @@ npm.cmd start
 - Customer menu: http://localhost:4200
 - Sign in or create an account: http://localhost:4200/login
 - Staff dashboard (staff accounts only): http://localhost:4200/admin
+- Inventory (staff accounts only): http://localhost:4200/admin/inventory
 - API documentation: http://localhost:8000/docs
 
 `seed_data.py --reset` deletes and rebuilds `backend/app/restaurant.db`. The database is not tracked by Git, so run it after cloning, and again before a demo so the live orders and upcoming reservations are current.
