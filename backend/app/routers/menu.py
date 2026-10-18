@@ -171,10 +171,16 @@ def patch_menu_item(item_id: int, item: MenuItemPatch):
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_menu_item(item_id: int):
-    with get_connection() as connection:
-        cursor = connection.execute(
-            "DELETE FROM menu_items WHERE id = ?",
-            (item_id,),
+    try:
+        with get_connection() as connection:
+            cursor = connection.execute(
+                "DELETE FROM menu_items WHERE id = ?",
+                (item_id,),
+            )
+    except sqlite3.IntegrityError:
+        raise HTTPException(
+            status_code=409,
+            detail="This dish appears in past orders; mark it unavailable instead of deleting it",
         )
 
     if cursor.rowcount == 0:
