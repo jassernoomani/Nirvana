@@ -14,7 +14,20 @@ Create the demo database first (deletes and rebuilds `app/restaurant.db`):
 
 Interactive API documentation: http://localhost:8000/docs
 
-Menu routes:
+Authentication routes:
+
+- `POST /api/auth/register`: creates a customer account (any `role` sent is ignored) and signs it in.
+- `POST /api/auth/login`: signs in with email and password. Wrong email and wrong password return the same 401 message.
+- `POST /api/auth/logout`: ends the session on the server and clears the cookie.
+- `GET /api/auth/me`: returns the signed-in user, or 401.
+
+Sessions use a random token in an HttpOnly, SameSite=Lax cookie (`nirvana_session`); only its SHA-256 hash is stored in the `sessions` table. Sessions expire after `SESSION_HOURS` (default 8). Set `COOKIE_SECURE=true` when serving over HTTPS. Passwords are hashed with PBKDF2-SHA256 (200,000 iterations, random salt).
+
+Route protection is done on the server with the `require_staff` and `require_customer` dependencies in `app/auth.py`: 401 when not signed in or the session expired, 403 when the role is wrong. The Angular route guards only improve navigation.
+
+`create_user.py` creates a customer or staff account, prompting for the password; `--update` changes an existing account's role and password and signs it out everywhere.
+
+Menu routes (reading is public; creating, changing and deleting require staff):
 
 - `GET /api/menu`: returns a list. Supports `category`, `available`, `search`, `min_price`, `max_price`, `vegetarian`, `sort` (name, price, category, id), `direction` (asc, desc), `limit` (1–100, default 100), and `offset`.
 - `GET /api/menu/page?page=1&page_size=20`: returns items, total, page, and page_size for the complete menu.
@@ -52,7 +65,7 @@ The list route now returns at most 100 dishes by default; clients with larger me
 For tests, install requirements-dev.txt in your environment and run:
 
 ```powershell
-.venv/Scripts/python.exe -m unittest test_menu test_data_model -v
+.venv/Scripts/python.exe -m unittest test_menu test_data_model test_auth -v
 ```
 
-Tests use temporary databases. This API currently has no authentication; administrative routes require access control before public deployment.
+Tests use temporary databases. Before a public deployment, also add rate limiting on sign-in and serve over HTTPS with `COOKIE_SECURE=true`.

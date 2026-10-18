@@ -10,6 +10,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for minimal environme
 
 from app import database
 from app.main import app
+from create_user import save_user
 
 
 class MenuTests(unittest.TestCase):
@@ -23,6 +24,9 @@ class MenuTests(unittest.TestCase):
         connection.close()
         self.client_context = TestClient(app)
         self.client = self.client_context.__enter__()
+        # Menu changes require staff; these tests run as a signed-in staff member.
+        save_user("staff@example.com", "Staff", "staff", "staff-password")
+        self.client.post("/api/auth/login", json={"email": "staff@example.com", "password": "staff-password"})
 
     def tearDown(self):
         self.client_context.__exit__(None, None, None)

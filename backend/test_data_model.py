@@ -116,6 +116,7 @@ class SeededDatabaseTests(unittest.TestCase):
 
     def test_dish_with_order_history_cannot_be_deleted(self):
         with TestClient(app) as client:
+            client.post("/api/auth/login", json={"email": "manager@nirvana.test", "password": seed_data.DEMO_PASSWORD})
             response = client.delete("/api/menu/1")
             self.assertEqual(response.status_code, 409)
             self.assertEqual(client.get("/api/menu/1").status_code, 200)

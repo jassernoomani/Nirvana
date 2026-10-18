@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field  # type: ignore[reportMissingImports]
+from pydantic import BaseModel, ConfigDict, Field, field_validator  # type: ignore[reportMissingImports]
 
 
 class MenuItemCreate(BaseModel):
@@ -34,3 +34,34 @@ class MenuPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+
+
+class RegisterRequest(BaseModel):
+    # Unknown fields such as "role" are ignored: public sign-up always creates a customer.
+    model_config = ConfigDict(extra="ignore")
+    email: str = Field(max_length=254, pattern=EMAIL_PATTERN)
+    full_name: str = Field(min_length=1, max_length=100)
+    password: str = Field(min_length=8, max_length=128)
+
+    # Trim email and name (never the password) before the length and format checks.
+    @field_validator("email", "full_name", mode="before")
+    @classmethod
+    def strip_text(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+
+class LoginRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    email: str = Field(min_length=1, max_length=254)
+    password: str = Field(min_length=1, max_length=128)
+
+
+class User(BaseModel):
+    id: int
+    email: str
+    full_name: str
+    role: str
+    is_vegetarian: bool

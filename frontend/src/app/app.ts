@@ -6,11 +6,15 @@ import { Subject, catchError, of, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Dish, DishInput, MenuService } from './menu.service';
 import { DialogFocusDirective } from './dialog-focus';
+import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Component({selector: 'app-root', standalone: true, imports: [CommonModule, FormsModule, DialogFocusDirective], templateUrl: './app.html'})
 export class AppComponent {
   private api = inject(MenuService);
   private destroy = inject(DestroyRef);
+  private router = inject(Router);
+  auth = inject(AuthService);
   private requests = new Subject<Record<string, string | number | boolean>>();
   dishes = signal<Dish[]>([]);
   categories = signal<string[]>([]);
@@ -68,6 +72,7 @@ export class AppComponent {
     this.pending.set(dish.id);
     this.api.delete(dish.id).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.pending.set(null); this.deleting.set(null); this.notice.set('Dish deleted.'); this.loadCategories(); this.load(true);}, error: err => {this.pending.set(null); this.deleting.set(null); this.error.set(this.message(err));}});
   }
+  signOut() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/login']), error: () => this.router.navigate(['/login'])});}
   private message(err: HttpErrorResponse): string {
     if (err.status === 0 || err.status === 502 || err.status === 504) return 'Cannot connect to the restaurant API. Start the backend on port 8000, then retry.';
     const detail = err.error?.detail;

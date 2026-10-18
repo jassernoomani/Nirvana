@@ -1,12 +1,15 @@
 import sqlite3
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException, Query, Response, status  # type: ignore
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status  # type: ignore
 
+from app.auth import require_staff
 from app.database import get_connection
 from app.schemas import MenuItem, MenuItemCreate, MenuItemPatch, MenuPage
 
 router = APIRouter(prefix="/api/menu", tags=["Menu"])
+# Reading the menu is public; every change requires a staff session.
+STAFF_ONLY = [Depends(require_staff)]
 
 
 def row_to_menu_item(row: sqlite3.Row) -> dict:
@@ -95,6 +98,7 @@ def get_menu_item(item_id: int):
     "",
     response_model=MenuItem,
     status_code=status.HTTP_201_CREATED,
+    dependencies=STAFF_ONLY,
 )
 def create_menu_item(item: MenuItemCreate):
     with get_connection() as connection:
@@ -122,7 +126,7 @@ def create_menu_item(item: MenuItemCreate):
     return row_to_menu_item(row)
 
 
-@router.put("/{item_id}", response_model=MenuItem)
+@router.put("/{item_id}", response_model=MenuItem, dependencies=STAFF_ONLY)
 def update_menu_item(item_id: int, item: MenuItemCreate):
     with get_connection() as connection:
         cursor = connection.execute(
@@ -155,7 +159,7 @@ def update_menu_item(item_id: int, item: MenuItemCreate):
     return row_to_menu_item(row)
 
 
-@router.patch("/{item_id}", response_model=MenuItem)
+@router.patch("/{item_id}", response_model=MenuItem, dependencies=STAFF_ONLY)
 def patch_menu_item(item_id: int, item: MenuItemPatch):
     changes = item.model_dump(exclude_unset=True)
     if not changes:
@@ -169,7 +173,7 @@ def patch_menu_item(item_id: int, item: MenuItemPatch):
     return row_to_menu_item(row)
 
 
-@router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=STAFF_ONLY)
 def delete_menu_item(item_id: int):
     try:
         with get_connection() as connection:

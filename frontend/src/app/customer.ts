@@ -3,15 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
+import { RouterLink } from '@angular/router';
 import { Dish, MenuService } from './menu.service';
+import { AuthService } from './auth.service';
 import { DialogFocusDirective } from './dialog-focus';
 
 interface CartLine {dish: Dish; quantity: number;}
 
-@Component({selector: 'customer-menu', standalone: true, imports: [CommonModule, FormsModule, DialogFocusDirective], templateUrl: './customer.html', styleUrl: './customer.css'})
+@Component({selector: 'customer-menu', standalone: true, imports: [CommonModule, FormsModule, RouterLink, DialogFocusDirective], templateUrl: './customer.html', styleUrl: './customer.css'})
 export class CustomerComponent {
   private api = inject(MenuService);
   private destroy = inject(DestroyRef);
+  auth = inject(AuthService);
   dishes = signal<Dish[]>([]);
   loading = signal(true);
   error = signal('');
@@ -31,7 +34,9 @@ export class CustomerComponent {
   cartCount = computed(() => this.cart().reduce((n,line) => n + line.quantity, 0));
   total = computed(() => this.cart().reduce((n,line) => n + Math.round(line.dish.price * 100) * line.quantity, 0) / 100);
 
-  constructor() {this.load();}
+  constructor() {this.load(); this.auth.ready();}
+  firstName(fullName: string) {return fullName.split(' ')[0];}
+  signOut() {this.auth.logout().subscribe({next: () => this.notice.set('You have been signed out.'), error: () => {}});}
   load() {
     this.loading.set(true); this.error.set('');
     // The API list is capped at 100; use the count endpoint to retrieve every page.

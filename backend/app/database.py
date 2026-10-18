@@ -50,6 +50,14 @@ SCHEMA = [
     )
     """,
     """
+    CREATE TABLE IF NOT EXISTS sessions (
+        token_hash TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL
+    )
+    """,
+    """
     CREATE TABLE IF NOT EXISTS user_allergies (
         user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         allergen_id INTEGER NOT NULL REFERENCES allergens(id) ON DELETE CASCADE,
@@ -113,6 +121,7 @@ SCHEMA = [
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
     """,
+    "CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)",
     "CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at)",
     "CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)",
     "CREATE INDEX IF NOT EXISTS idx_order_items_dish ON order_items(menu_item_id)",
