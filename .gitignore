@@ -1,0 +1,16 @@
+# Local environments and generated build output
+**/.venv/
+**/node_modules/
+**/dist/
+**/.angular/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+!.env.example
+*.log
+backend/app/restaurant.before-*.db
+backend/app/*.db-journal
+backend/app/*.db-wal
+backend/app/*.db-shm

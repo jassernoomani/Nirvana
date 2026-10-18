@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "name": "Margherita Pizza",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-18b2deb7-680c-4715-bd65-6d13cd6fcb0a.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Margherita Pizza: Tomato, mozzarella, basil. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 3,
+    "name": "Raviolli Pizza",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-59b55452-dae8-4241-81d2-4b0a47f65b71.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Raviolli Pizza: Tomato sauce, mozzarella, herbs on pizza. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 4,
+    "name": "Pasta alla pomodoro",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-e5468f63-6a2b-42ef-b308-1596fc09af2a.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Pasta alla pomodoro: Spaghetti with tomato sauce. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 5,
+    "name": "Bruschetta",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-3b6ebfbe-33e8-4623-883b-ed22a3fc1354.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Bruschetta: Toasted bread, chopped tomatoes, basil. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 6,
+    "name": "Roasted Tomato Soup",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-b23fc7fe-8e25-4224-af1e-03251a9e286e.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Roasted Tomato Soup: Tomato soup, basil, toasted bread. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 7,
+    "name": "Crispy Calamari",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-5c4db3f8-387d-468a-bc17-30c6f918a4b3.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Crispy Calamari: Fried calamari rings, lemon, dipping sauce. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 8,
+    "name": "Hummus and Flatbread",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-fc94587e-5bef-4ca8-a2e8-18b2ce07e91f.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Hummus and Flatbread: Chickpea hummus, tahini, olive oil, flatbread. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 9,
+    "name": "Mediterranean Salad",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-820c19ab-993a-4ab1-bf71-fca1c16405d1.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Mediterranean Salad: Cucumber, tomatoes, olives, red onion. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 10,
+    "name": "Grilled Chicken Salad",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-3ed36c7e-e2f3-4fa6-b4d3-ee8705990870.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Grilled Chicken Salad: Grilled chicken slices, mixed greens, tomatoes. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 11,
+    "name": "Quinoa Garden Bowl",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-e3a95de3-c8d3-426b-96b8-c9771bfb401f.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Quinoa Garden Bowl: Quinoa, roasted vegetables, chickpeas. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 12,
+    "name": "Pepperoni Pizza",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-0ef39de6-f8bc-4491-beaa-2bd25b8e3152.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Pepperoni Pizza: Tomato, mozzarella, pepperoni. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 13,
+    "name": "Garden Vegetable Pizza",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-ce06e0f1-184b-4f82-af5c-2a1a090a6675.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Garden Vegetable Pizza: Peppers, mushrooms, zucchini, olives. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 14,
+    "name": "Tuna and Olive Pizza",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-f824f3f4-29e9-431c-ad6c-4f3de109f6a3.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Tuna and Olive Pizza: Mozzarella, tuna, red onion, black olives. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 15,
+    "name": "Penne Arrabbiata",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-30ced1c5-9a50-4694-81fb-632f96365eb8.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Penne Arrabbiata: Penne with chili tomato sauce. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 16,
+    "name": "Mushroom Tagliatelle",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-b2e48e49-088b-450d-9ef3-692e02c60df1.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Mushroom Tagliatelle: Tagliatelle, mushrooms, cream, thyme. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 17,
+    "name": "Spaghetti Bolognese",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-7953539e-2267-4fe0-be2b-ad25200938fa.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Spaghetti Bolognese: Spaghetti, beef tomato sauce. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 18,
+    "name": "Seafood Linguine",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-f2c1d8d1-ba43-4066-a8b5-f8c5a1629c74.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Seafood Linguine: Linguine, shrimp, mussels, tomato. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 19,
+    "name": "Grilled Sea Bass",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-208e372d-90eb-4f9f-9860-300d974227dd.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Grilled Sea Bass: Whole grilled sea bass, lemon, vegetables, potatoes. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 20,
+    "name": "Herb-Roasted Chicken",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-c2b99674-9a77-450a-ad93-f481b1d8b27c.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Herb-Roasted Chicken: Roasted chicken, rosemary, potato wedges. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 21,
+    "name": "Beef Steak and Fries",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-5db90932-819b-45a6-864b-74f19d68d508.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Beef Steak and Fries: Beef steak, fries, pepper sauce. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 22,
+    "name": "Vegetable Couscous",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-573bdd73-5448-4139-844b-a29e48cb4993.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Vegetable Couscous: Couscous, carrots, zucchini, chickpeas. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 23,
+    "name": "Chocolate Brownie",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-45b826cb-a71c-48e1-ba6e-77e9a8677535.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Chocolate Brownie: Brownie, vanilla ice cream. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 24,
+    "name": "Lemon Tart",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-8be2c19b-5fd5-441b-b224-4cdc866cd3bd.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Lemon Tart: Lemon tart, citrus zest. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 25,
+    "name": "Seasonal Fruit Salad",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-a5586f8a-db81-4350-a45c-1b84a4bafa7b.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Seasonal Fruit Salad: Fresh seasonal fruit, mint. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 26,
+    "name": "Fresh Lemonade",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-7801c192-fd93-4e68-9d2b-cdeb16538be9.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Fresh Lemonade: Lemonade in glass, lemon slices. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 27,
+    "name": "Mint Tea",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-f5e2de4b-6c29-455a-b058-5189f82bd3c4.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Mint Tea: Green tea in glass with fresh mint. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  },
+  {
+    "id": 28,
+    "name": "Orange Juice",
+    "source": "C:\\Users\\manef\\.codex\\generated_images\\01a131da-fcd4-7ad2-87f6-4c577ceeec25\\exec-28eb33cc-7c80-47fd-a0b1-b29cd56bc620.png",
+    "prompt": "Use case: illustration-story. Asset type: restaurant dish card. Polished realistic food illustration of Orange Juice: Fresh orange juice in glass. Single serving centered on white ceramic dish (clear glass for drinks) on warm pale cream background. Appetizing natural colors, soft daylight, three-quarter overhead view, landscape composition, food fills central 70%, no text, no people, no watermark."
+  }
+]
