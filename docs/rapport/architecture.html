@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Architecture Nirvana</title>
+<style>body{margin:0;background:#fff;font-family:Segoe UI,Arial,sans-serif}</style></head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2f4b33"/></marker>
+  </defs>
+  <rect width="1200" height="640" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="22" font-weight="600" fill="#1f3322">Architecture de Nirvana : tout s'exécute sur le PC du restaurant</text>
+
+  <!-- Browser -->
+  <rect x="30" y="70" width="300" height="520" rx="14" fill="#f3f6ef" stroke="#7a9a6c" stroke-width="2"/>
+  <text x="180" y="102" text-anchor="middle" font-size="18" font-weight="600" fill="#1f3322">Navigateur</text>
+  <text x="180" y="126" text-anchor="middle" font-size="14" fill="#44614a">Angular 20 (composants autonomes, signals)</text>
+  <rect x="55" y="150" width="250" height="150" rx="10" fill="#fff" stroke="#9db58f"/>
+  <text x="180" y="176" text-anchor="middle" font-size="15" font-weight="600" fill="#1f3322">Espace client</text>
+  <text x="180" y="200" text-anchor="middle" font-size="13" fill="#333">Menu · Panier · Commandes</text>
+  <text x="180" y="222" text-anchor="middle" font-size="13" fill="#333">Réservations · Avis</text>
+  <text x="180" y="244" text-anchor="middle" font-size="13" fill="#333">Recommandations (IA)</text>
+  <text x="180" y="276" text-anchor="middle" font-size="12" fill="#666">gardes de route : customerGuard</text>
+  <rect x="55" y="320" width="250" height="170" rx="10" fill="#fff" stroke="#9db58f"/>
+  <text x="180" y="346" text-anchor="middle" font-size="15" font-weight="600" fill="#1f3322">Espace personnel</text>
+  <text x="180" y="370" text-anchor="middle" font-size="13" fill="#333">Gestion du menu · Cuisine</text>
+  <text x="180" y="392" text-anchor="middle" font-size="13" fill="#333">Stock</text>
+  <text x="180" y="414" text-anchor="middle" font-size="13" fill="#333">Intelligence : prévision,</text>
+  <text x="180" y="436" text-anchor="middle" font-size="13" fill="#333">analyse des avis, prompts</text>
+  <text x="180" y="468" text-anchor="middle" font-size="12" fill="#666">gardes de route : staffGuard</text>
+  <text x="180" y="530" text-anchor="middle" font-size="12" fill="#666">Cookie de session HttpOnly, SameSite</text>
+  <text x="180" y="550" text-anchor="middle" font-size="12" fill="#666">Proxy de développement → port 8000</text>
+
+  <!-- arrow browser -> api -->
+  <line x1="332" y1="330" x2="418" y2="330" stroke="#2f4b33" stroke-width="2.5" marker-end="url(#a)"/>
+  <line x1="418" y1="352" x2="332" y2="352" stroke="#2f4b33" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="375" y="318" text-anchor="middle" font-size="12" fill="#2f4b33">HTTP / JSON</text>
+
+  <!-- Backend -->
+  <rect x="420" y="70" width="400" height="520" rx="14" fill="#eef2f7" stroke="#6f86a6" stroke-width="2"/>
+  <text x="620" y="102" text-anchor="middle" font-size="18" font-weight="600" fill="#1d2b3d">API FastAPI (Python)</text>
+  <text x="620" y="126" text-anchor="middle" font-size="14" fill="#3f5470">validation Pydantic · rôles vérifiés côté serveur</text>
+  <rect x="445" y="148" width="350" height="140" rx="10" fill="#fff" stroke="#97a9c2"/>
+  <text x="620" y="174" text-anchor="middle" font-size="15" font-weight="600" fill="#1d2b3d">Routeurs métier</text>
+  <text x="620" y="198" text-anchor="middle" font-size="13" fill="#333">/api/auth · /api/menu · /api/orders</text>
+  <text x="620" y="220" text-anchor="middle" font-size="13" fill="#333">/api/reservations · /api/reviews</text>
+  <text x="620" y="242" text-anchor="middle" font-size="13" fill="#333">/api/kitchen · /api/inventory (personnel)</text>
+  <text x="620" y="270" text-anchor="middle" font-size="12" fill="#666">PBKDF2 600 000 itérations · limite de connexions</text>
+  <rect x="445" y="306" width="350" height="190" rx="10" fill="#fff" stroke="#97a9c2"/>
+  <text x="620" y="332" text-anchor="middle" font-size="15" font-weight="600" fill="#1d2b3d">/api/ai : modules d'IA</text>
+  <text x="620" y="358" text-anchor="middle" font-size="13" fill="#333">Recommandations : filtre allergies (code)</text>
+  <text x="620" y="380" text-anchor="middle" font-size="13" fill="#333">→ score → reclassement LLM optionnel</text>
+  <text x="620" y="406" text-anchor="middle" font-size="13" fill="#333">Prévision : forêt aléatoire vs référence</text>
+  <text x="620" y="432" text-anchor="middle" font-size="13" fill="#333">Avis : masquage → filtre injection</text>
+  <text x="620" y="454" text-anchor="middle" font-size="13" fill="#333">→ LLM (schéma JSON) → vérification des citations</text>
+  <text x="620" y="480" text-anchor="middle" font-size="12" fill="#666">cache : modèle + version du prompt</text>
+  <text x="620" y="530" text-anchor="middle" font-size="12" fill="#666">Uvicorn · port 8000</text>
+
+  <!-- DB -->
+  <line x1="822" y1="200" x2="898" y2="200" stroke="#2f4b33" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="860" y="190" text-anchor="middle" font-size="12" fill="#2f4b33">SQL</text>
+  <rect x="900" y="80" width="270" height="230" rx="14" fill="#f8f4ec" stroke="#b49a6a" stroke-width="2"/>
+  <text x="1035" y="112" text-anchor="middle" font-size="18" font-weight="600" fill="#3d3220">SQLite</text>
+  <text x="1035" y="140" text-anchor="middle" font-size="13" fill="#333">utilisateurs, sessions, allergies</text>
+  <text x="1035" y="162" text-anchor="middle" font-size="13" fill="#333">menu, ingrédients, recettes</text>
+  <text x="1035" y="184" text-anchor="middle" font-size="13" fill="#333">commandes, réservations, avis</text>
+  <text x="1035" y="206" text-anchor="middle" font-size="13" fill="#333">mouvements de stock</text>
+  <text x="1035" y="228" text-anchor="middle" font-size="13" fill="#333">cache d'analyse IA</text>
+  <text x="1035" y="262" text-anchor="middle" font-size="12" fill="#666">17 tables · migrations au démarrage</text>
+  <text x="1035" y="284" text-anchor="middle" font-size="12" fill="#666">données de démo : seed_data.py</text>
+
+  <!-- Ollama -->
+  <line x1="822" y1="430" x2="898" y2="430" stroke="#2f4b33" stroke-width="2.5" marker-end="url(#a)"/>
+  <text x="860" y="420" text-anchor="middle" font-size="12" fill="#2f4b33">HTTP local</text>
+  <rect x="900" y="340" width="270" height="180" rx="14" fill="#f4eef6" stroke="#9a7aa8" stroke-width="2"/>
+  <text x="1035" y="372" text-anchor="middle" font-size="18" font-weight="600" fill="#33203d">Ollama</text>
+  <text x="1035" y="398" text-anchor="middle" font-size="13" fill="#333">qwen2.5:3b (quantifié 4 bits)</text>
+  <text x="1035" y="422" text-anchor="middle" font-size="13" fill="#333">/api/chat · format = schéma JSON</text>
+  <text x="1035" y="446" text-anchor="middle" font-size="13" fill="#333">température 0</text>
+  <text x="1035" y="476" text-anchor="middle" font-size="12" fill="#666">adresse limitée à la machine locale</text>
+  <text x="1035" y="498" text-anchor="middle" font-size="12" fill="#666">aucune clé d'API, aucun envoi externe</text>
+  <text x="1035" y="560" text-anchor="middle" font-size="13" fill="#555">scikit-learn s'exécute dans l'API</text>
+</svg>
+</body></html>
