@@ -1,0 +1,62 @@
+<div class="page">
+  <customer-nav />
+  <main class="page-main">
+    <div class="eyebrow">RESERVATIONS</div>
+    <h1>Book a table.</h1>
+    @if (confirmation(); as booked) {
+      <div class="page-success" role="status"><strong>Your table is confirmed.</strong> {{ when(booked.reserved_for) | date:'EEEE d MMMM, HH:mm' }} for {{ booked.party_size }} {{ booked.party_size === 1 ? 'guest' : 'guests' }}@if (booked.table_label) {, table {{ booked.table_label }}}. We look forward to welcoming you.</div>
+    }
+    <div class="booking-layout">
+      <section class="page-card">
+        <form (ngSubmit)="submit()" novalidate class="booking-form">
+          <div class="booking-row">
+            <label>Date<input type="date" name="date" [(ngModel)]="date" [min]="today" [max]="lastDay" (change)="loadSlots()" required></label>
+            <label>Guests<select name="partySize" [(ngModel)]="partySize" (change)="loadSlots()">@for (n of partySizes(); track n) {<option [ngValue]="n">{{ n }} {{ n === 1 ? 'guest' : 'guests' }}</option>}</select></label>
+          </div>
+          <fieldset>
+            <legend>Time</legend>
+            @if (loadingSlots()) {<p class="booking-hint" role="status">Checking free tables…</p>}
+            @else if (availability(); as a) {
+              <div class="slots">@for (slot of a.slots; track slot.time) {<button type="button" class="slot" [class.selected]="time === slot.time" [disabled]="!slot.available" [attr.aria-pressed]="time === slot.time" (click)="time = slot.time">{{ slot.time }}</button>}</div>
+              @if (!anyFree()) {<p class="booking-hint">No free table for {{ partySize }} on this day. Try another date or party size.</p>}
+              <p class="booking-hint">Tables are held for {{ a.duration_minutes / 60 }} hours. For groups larger than {{ a.max_party_size }}, please contact the restaurant.</p>
+            } @else {<p class="booking-hint">Choose a date between today and {{ lastDay }}.</p>}
+          </fieldset>
+          <div class="booking-contact">
+            <span>Booking as <strong>{{ auth.user()?.full_name }}</strong> · {{ auth.user()?.email }}</span>
+          </div>
+          <label>Phone number <small>(optional, in case we need to reach you)</small><input type="tel" name="phone" [(ngModel)]="phone" autocomplete="tel" maxlength="30"></label>
+          <label>Special requests <small>(optional)</small><textarea name="notes" [(ngModel)]="notes" maxlength="300" rows="3" placeholder="High chair, birthday, accessibility needs…"></textarea></label>
+          @if (error()) {<div class="page-error" role="alert">{{ error() }}</div>}
+          <div class="page-actions"><button class="page-primary" type="submit" [disabled]="booking()">{{ booking() ? 'Booking…' : 'Confirm reservation' }}</button></div>
+        </form>
+      </section>
+      <section class="page-card">
+        <h2 class="list-title">My reservations</h2>
+        @if (listError()) {<div class="page-error" role="alert">{{ listError() }}</div>}
+        @if (reservations() === null && !listError()) {<p class="booking-hint" role="status">Loading…</p>}
+        @else if (!upcoming().length && !past().length) {<p class="booking-hint">You have no reservations yet.</p>}
+        @if (upcoming().length) {
+          <h3 class="list-subtitle">Upcoming</h3>
+          @for (r of upcoming(); track r.id) {
+            <article class="reservation">
+              <div><strong>{{ when(r.reserved_for) | date:'EEE d MMM, HH:mm' }}</strong><small>{{ r.party_size }} {{ r.party_size === 1 ? 'guest' : 'guests' }}@if (r.table_label) { · table {{ r.table_label }}}</small>@if (r.notes) {<small>{{ r.notes }}</small>}</div>
+              <div class="reservation-end"><span class="status" [attr.data-status]="r.status === 'booked' ? 'ready' : r.status">{{ labels[r.status] ?? r.status }}</span>
+                @if (r.status === 'booked') {
+                  @if (confirmingCancel() === r.id) {<span class="cancel-confirm">Cancel it? <button type="button" class="page-text-button" (click)="cancel(r)">Yes, cancel</button><button type="button" class="page-text-button keep" (click)="confirmingCancel.set(null)">Keep</button></span>}
+                  @else {<button type="button" class="page-text-button" (click)="confirmingCancel.set(r.id)">Cancel</button>}
+                }
+              </div>
+            </article>
+          }
+        }
+        @if (past().length) {
+          <h3 class="list-subtitle">Past</h3>
+          @for (r of past(); track r.id) {
+            <article class="reservation past"><div><strong>{{ when(r.reserved_for) | date:'EEE d MMM y, HH:mm' }}</strong><small>{{ r.party_size }} {{ r.party_size === 1 ? 'guest' : 'guests' }}</small></div><span class="status" [attr.data-status]="r.status === 'no_show' ? 'cancelled' : r.status">{{ labels[r.status] ?? r.status }}</span></article>
+          }
+        }
+      </section>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,22 @@
+<div class="auth-page">
+  <a class="auth-brand" routerLink="/" aria-label="Restauration home"><span>r.</span>restauration<em>●</em></a>
+  <main class="auth-card">
+    <div class="eyebrow">{{ mode() === 'login' ? 'WELCOME BACK' : 'JOIN US' }}</div>
+    <h1>{{ mode() === 'login' ? 'Sign in to your account.' : 'Create your account.' }}</h1>
+    <p class="auth-lead">{{ mode() === 'login' ? 'Order, book a table and share your thoughts on our dishes.' : 'Save your preferences, order online and book a table in seconds.' }}</p>
+    @if (expired) {<div class="auth-info" role="status">Your session has expired. Please sign in again.</div>}
+    <div class="auth-tabs" role="tablist">
+      <button type="button" role="tab" [attr.aria-selected]="mode() === 'login'" [class.selected]="mode() === 'login'" (click)="switchTo('login')">Sign in</button>
+      <button type="button" role="tab" [attr.aria-selected]="mode() === 'register'" [class.selected]="mode() === 'register'" (click)="switchTo('register')">Create account</button>
+    </div>
+    <form (ngSubmit)="submit()" novalidate>
+      @if (mode() === 'register') {<label>Full name<input name="fullName" [(ngModel)]="fullName" autocomplete="name" maxlength="100"></label>}
+      <label>Email<input name="email" type="email" [(ngModel)]="email" autocomplete="email" maxlength="254"></label>
+      <label>Password<input name="password" type="password" [(ngModel)]="password" [attr.autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'" maxlength="128"></label>
+      @if (mode() === 'register') {<small class="auth-hint">At least 8 characters.</small>}
+      @if (error()) {<div class="auth-error" role="alert">{{ error() }}</div>}
+      <button class="auth-submit" type="submit" [disabled]="busy()">{{ busy() ? 'Please wait…' : mode() === 'login' ? 'Sign in' : 'Create account' }}</button>
+    </form>
+    <a class="auth-back" routerLink="/">← Back to the menu</a>
+  </main>
+</div>

@@ -1,0 +1,119 @@
+<div class="shell">
+  <aside class="sidebar"><a class="brand" routerLink="/" aria-label="Restauration home"><span class="brand-icon">r.</span>restauration<span class="brand-dot">●</span></a><div class="workspace">RESTAURANT WORKSPACE</div><staff-nav /></aside>
+  <main>
+    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>No-shows</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="signOut()">Sign out</button></span></header>
+    <div class="noshow"><div class="ns-main">
+      <div class="ns-heading">
+        <div><div class="eyebrow">FEWER EMPTY TABLES</div><h1>Know who is likely not to come.</h1><p>A classifier scores every upcoming reservation, suggests a careful amount of overbooking and targets reminders at the bookings that need one.</p></div>
+        <div class="controls"><label>Horizon <select [(ngModel)]="days" [disabled]="loading()" aria-label="Horizon in days"><option [ngValue]="3">3 days</option><option [ngValue]="7">7 days</option><option [ngValue]="14">14 days</option></select></label><button class="primary" (click)="load()" [disabled]="loading()">{{ loading() ? 'Training…' : 'Refresh predictions' }}</button></div>
+      </div>
+
+      @if (error()) {<div class="error" role="alert">{{ error() }}</div>}
+      @if (notice()) {<div class="notice" role="status">{{ notice() }} <button aria-label="Dismiss message" (click)="notice.set('')">×</button></div>}
+
+      @if (loading() && !data()) {
+        <div class="ns-loading" role="status"><span class="spinner"></span> Training on past reservations and validating on the most recent ones…</div>
+      } @else if (data(); as d) {
+        <div class="ns-metrics">
+          <div><small>No-show rate · {{ d.trained_on }} past reservations</small><strong>{{ percent(d.base_rate) }}</strong></div>
+          <div><small>Reservations at medium or high risk</small><strong>{{ atRisk() }} / {{ d.predictions.length }}</strong></div>
+          <div><small>Suggested extra bookings · whole horizon</small><strong>{{ extraTotal() }}</strong></div>
+          <div><small>Reminders still to schedule</small><strong>{{ newReminders() }}</strong></div>
+        </div>
+
+        <section class="ns-panel">
+          <div class="ns-title"><h2>How reliable is the model?</h2><span class="ns-tag" [class.ns-tag-off]="!usesModel()">{{ usesModel() ? 'Classifier in use' : 'Base rate in use' }}</span></div>
+          <p class="subtle">Validated on the latest {{ d.holdout_size }} resolved reservations ({{ d.holdout_no_shows }} no-shows), never seen during training. History {{ d.training_from }} to {{ d.training_to }}.</p>
+          <div class="ns-facts">
+            <div><small>Brier score · model / flat rate (lower is better)</small><strong>{{ d.model_brier }} / {{ d.baseline_brier }}</strong></div>
+            <div><small>Ranking quality (AUC, 0.5 = chance)</small><strong>{{ d.model_auc ?? '—' }}</strong></div>
+            <div><small>Observed no-shows · riskiest quarter vs the rest</small><strong>{{ percent(d.top_quartile_rate) }} vs {{ percent(d.other_rate) }}</strong></div>
+          </div>
+          <p class="data-note">{{ d.notice }}</p>
+        </section>
+
+        <section class="ns-panel">
+          <div class="ns-title"><h2>Upcoming reservations</h2><label class="ns-check"><input type="checkbox" [checked]="showAll()" (change)="showAll.set(!showAll())"> Show every reservation</label></div>
+          <p class="subtle">Medium risk from {{ percent(d.thresholds.medium) }}, high risk from {{ percent(d.thresholds.high) }}. Factors are the facts about a booking that move its score most.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>When</th><th>Guest</th><th>Party</th><th>Table</th><th>No-show chance</th><th>Risk</th><th>Main factors</th><th>Reminders</th></tr></thead>
+            <tbody>
+              @for (item of rows(); track item.id) {
+                <tr>
+                  <td>{{ item.reserved_for.slice(0, 10) }} · {{ item.reserved_for.slice(11, 16) }}</td>
+                  <td>{{ item.guest }}</td>
+                  <td>{{ item.party_size }}</td>
+                  <td>{{ item.table_label ?? '—' }}</td>
+                  <td><strong>{{ percent(item.probability) }}</strong></td>
+                  <td><span class="ns-pill" [class]="'ns-pill ' + item.risk">{{ risk(item.risk) }}</span></td>
+                  <td>@for (factor of item.factors; track $index) {<span class="factor" [class.up]="factor.effect === 'raises'">{{ factor.effect === 'raises' ? '▲' : '▼' }} {{ factor.factor }}</span>} @empty {<span class="muted">—</span>}</td>
+                  <td>@for (state of item.reminders; track state.kind) {<span class="chip">{{ kind(state.kind) }} · {{ state.status }}</span>} @empty {<span class="muted">—</span>}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="8" class="ns-empty">{{ showAll() ? 'No confirmed reservation in this period.' : 'No reservation stands out as at risk in this period.' }}</td></tr>
+              }
+            </tbody>
+          </table></div>
+        </section>
+
+        <section class="ns-panel">
+          <h2>Overbooking advice per service</h2>
+          <p class="subtle">Extra bookings are suggested only while the chance of having more guests than tables stays under {{ percent(d.overbooking.tolerance) }}, up to {{ d.overbooking.max_extra }} per service. It is advice for staff: online booking still refuses to double-book a table.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Date</th><th>Service</th><th>Bookings</th><th>Guests</th><th>Expected no-shows</th><th>Chance of at least one</th><th>Suggested extra bookings</th><th>Chance of a clash</th></tr></thead>
+            <tbody>
+              @for (plan of d.services; track plan.date + plan.service) {
+                <tr>
+                  <td>{{ plan.date }}</td><td>{{ serviceLabel(plan.service) }}</td><td>{{ plan.bookings }}</td><td>{{ plan.covers }}</td>
+                  <td>{{ plan.expected_no_shows | number:'1.0-2' }}</td><td>{{ percent(plan.chance_of_any_no_show) }}</td>
+                  <td [class.gain]="plan.suggested_extra_bookings > 0"><strong>{{ plan.suggested_extra_bookings > 0 ? '+' + plan.suggested_extra_bookings : '—' }}</strong></td>
+                  <td>{{ plan.suggested_extra_bookings > 0 ? percent(plan.clash_risk) : '—' }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="8" class="ns-empty">No confirmed reservation in this period.</td></tr>
+              }
+            </tbody>
+          </table></div>
+        </section>
+
+        <section class="ns-panel">
+          <div class="ns-title"><h2>Targeted reminders</h2>
+            <div class="controls"><button class="primary" (click)="schedule()" [disabled]="working() || newReminders() === 0">Schedule {{ newReminders() }} reminder{{ newReminders() === 1 ? '' : 's' }}</button><button class="secondary" (click)="dispatch()" [disabled]="working() || pending() === 0">Send due reminders</button></div>
+          </div>
+          <p class="subtle">Only medium and high risk bookings get a message: 24 hours before (or right away when the booking is sooner) and, for high risk, again 3 hours before. The guest is asked to cancel if plans changed. Messages never mention the prediction.</p>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Guest</th><th>Booking</th><th>Reminder</th><th>Send at</th><th>Channel</th><th>State</th></tr></thead>
+            <tbody>
+              @for (step of d.reminder_plan; track step.reservation_id + step.kind) {
+                <tr [title]="step.message">
+                  <td>{{ step.guest }}</td><td>{{ step.reserved_for.slice(0, 10) }} · {{ step.reserved_for.slice(11, 16) }}</td><td>{{ kind(step.kind) }}</td>
+                  <td>{{ step.scheduled_for.slice(0, 10) }} · {{ step.scheduled_for.slice(11, 16) }}</td><td>{{ step.channel === 'sms' ? 'SMS' : 'E-mail' }}</td>
+                  <td><span class="chip">{{ step.already_scheduled ? 'scheduled' : 'to schedule' }}</span></td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="ns-empty">No reminder to plan.</td></tr>
+              }
+            </tbody>
+          </table></div>
+          <p class="data-note">Hover a row to read the message. No SMS or e-mail gateway is configured in this project: sent reminders are appended to the outbox file <code>backend/app/noshow_outbox.jsonl</code> for a messaging service to deliver. To run the whole cycle automatically, schedule <code>run_noshow_reminders.py</code> every 30 minutes.</p>
+
+          @if (stored().length) {
+            <h3>Recent reminders</h3>
+            <div class="table-scroll"><table>
+              <thead><tr><th>Guest</th><th>Booking</th><th>Reminder</th><th>Planned for</th><th>Status</th><th>Detail</th></tr></thead>
+              <tbody>
+                @for (item of stored(); track item.id) {
+                  <tr>
+                    <td>{{ item.guest }}</td><td>{{ item.reserved_for.slice(0, 10) }} · {{ item.reserved_for.slice(11, 16) }}</td><td>{{ kind(item.kind) }}</td>
+                    <td>{{ item.scheduled_for.slice(0, 10) }} · {{ item.scheduled_for.slice(11, 16) }}</td>
+                    <td><span class="chip" [class.done]="item.status === 'dispatched'">{{ item.status }}</span></td><td class="muted">{{ item.detail ?? '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table></div>
+          }
+        </section>
+      }
+    </div></div>
+  </main>
+</div>
