@@ -1,0 +1,1411 @@
+{
+  "date": "2026-10-19 20:26",
+  "history_days": 90,
+  "seeds": [
+    2026,
+    1,
+    2,
+    3,
+    4
+  ],
+  "weeks": 6,
+  "rf_params": {
+    "n_estimators": 80,
+    "max_depth": 10,
+    "min_samples_leaf": 3,
+    "random_state": 42,
+    "n_jobs": 1
+  },
+  "summary": {
+    "random_forest": {
+      "hourly_mae": 1.0463,
+      "daily_mae": 7.5047,
+      "daily_mape": 0.123,
+      "week_bias": 0.0071,
+      "peak_hour_within_1h": 0.6284
+    },
+    "weekly_baseline": {
+      "hourly_mae": 1.0415,
+      "daily_mae": 7.1923,
+      "daily_mape": 0.1154,
+      "week_bias": -0.0175,
+      "peak_hour_within_1h": 0.5761
+    },
+    "last_week": {
+      "hourly_mae": 1.2542,
+      "daily_mae": 8.9863,
+      "daily_mape": 0.1424,
+      "week_bias": -0.0098,
+      "peak_hour_within_1h": 0.5333
+    },
+    "app_policy": {
+      "hourly_mae": 1.0394,
+      "daily_mae": 7.1263,
+      "daily_mape": 0.1141,
+      "week_bias": -0.0111,
+      "peak_hour_within_1h": 0.6093
+    },
+    "oracle": {
+      "hourly_mae": 0.905,
+      "daily_mae": 6.3483,
+      "daily_mape": 0.101,
+      "week_bias": -0.006,
+      "peak_hour_within_1h": 0.6427
+    }
+  },
+  "forest_beats_baseline": "12/30",
+  "app_choice_was_better": "18/30",
+  "app_chose_forest": "10/30",
+  "folds": [
+    {
+      "seed": 2026,
+      "week_from": "2026-09-07",
+      "training_days": 26,
+      "actual_orders": 421,
+      "app_chose": "random_forest",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.049,
+          "daily_mae": 5.4,
+          "daily_mape": 0.0948,
+          "week_bias": 0.0373,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.96,
+          "daily_mae": 6.67,
+          "daily_mape": 0.1119,
+          "week_bias": 0.0238,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.31,
+          "daily_mae": 8,
+          "daily_mape": 0.1379,
+          "week_bias": 0.038,
+          "peak_hour_within_1h": 0.571
+        },
+        "app_policy": {
+          "hourly_mae": 1.049,
+          "daily_mae": 5.4,
+          "daily_mape": 0.0948,
+          "week_bias": 0.0373,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.864,
+          "daily_mae": 5.47,
+          "daily_mape": 0.0869,
+          "week_bias": 0.0554,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 2026,
+      "week_from": "2026-09-14",
+      "training_days": 33,
+      "actual_orders": 473,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.222,
+          "daily_mae": 5.48,
+          "daily_mape": 0.0801,
+          "week_bias": -0.081,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.234,
+          "daily_mae": 6.0,
+          "daily_mape": 0.0901,
+          "week_bias": -0.0832,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.429,
+          "daily_mae": 7.43,
+          "daily_mape": 0.103,
+          "week_bias": -0.1099,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 1.234,
+          "daily_mae": 6.0,
+          "daily_mape": 0.0901,
+          "week_bias": -0.0832,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 1.036,
+          "daily_mae": 3.76,
+          "daily_mape": 0.0597,
+          "week_bias": -0.0462,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 2026,
+      "week_from": "2026-09-21",
+      "training_days": 40,
+      "actual_orders": 475,
+      "app_chose": "random_forest",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.93,
+          "daily_mae": 7.71,
+          "daily_mape": 0.1149,
+          "week_bias": -0.0716,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.956,
+          "daily_mae": 6.29,
+          "daily_mape": 0.1017,
+          "week_bias": -0.066,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.381,
+          "daily_mae": 5.43,
+          "daily_mape": 0.0805,
+          "week_bias": -0.0042,
+          "peak_hour_within_1h": 0.571
+        },
+        "app_policy": {
+          "hourly_mae": 0.93,
+          "daily_mae": 7.71,
+          "daily_mape": 0.1149,
+          "week_bias": -0.0716,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.876,
+          "daily_mae": 7.27,
+          "daily_mape": 0.1053,
+          "week_bias": -0.0359,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 2026,
+      "week_from": "2026-09-28",
+      "training_days": 47,
+      "actual_orders": 451,
+      "app_chose": "random_forest",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.919,
+          "daily_mae": 4.73,
+          "daily_mape": 0.0848,
+          "week_bias": -0.0003,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.012,
+          "daily_mae": 4.76,
+          "daily_mape": 0.0863,
+          "week_bias": 0.0118,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.298,
+          "daily_mae": 5.71,
+          "daily_mape": 0.0994,
+          "week_bias": 0.0532,
+          "peak_hour_within_1h": 0.571
+        },
+        "app_policy": {
+          "hourly_mae": 0.919,
+          "daily_mae": 4.73,
+          "daily_mape": 0.0848,
+          "week_bias": -0.0003,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.849,
+          "daily_mae": 5.98,
+          "daily_mape": 0.0959,
+          "week_bias": 0.0305,
+          "peak_hour_within_1h": 0.857
+        }
+      }
+    },
+    {
+      "seed": 2026,
+      "week_from": "2026-10-05",
+      "training_days": 54,
+      "actual_orders": 492,
+      "app_chose": "random_forest",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.066,
+          "daily_mae": 11.35,
+          "daily_mape": 0.1701,
+          "week_bias": -0.0155,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.026,
+          "daily_mae": 11.19,
+          "daily_mape": 0.1603,
+          "week_bias": -0.0522,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.149,
+          "daily_mae": 12.14,
+          "daily_mape": 0.168,
+          "week_bias": -0.0833,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 1.066,
+          "daily_mae": 11.35,
+          "daily_mape": 0.1701,
+          "week_bias": -0.0155,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.938,
+          "daily_mae": 8.07,
+          "daily_mape": 0.1231,
+          "week_bias": -0.0415,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 2026,
+      "week_from": "2026-10-12",
+      "training_days": 61,
+      "actual_orders": 478,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.065,
+          "daily_mae": 6.02,
+          "daily_mape": 0.0884,
+          "week_bias": 0.0106,
+          "peak_hour_within_1h": 0.429
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.044,
+          "daily_mae": 6.38,
+          "daily_mape": 0.091,
+          "week_bias": -0.0112,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.321,
+          "daily_mae": 10.29,
+          "daily_mape": 0.1582,
+          "week_bias": 0.0293,
+          "peak_hour_within_1h": 0.571
+        },
+        "app_policy": {
+          "hourly_mae": 1.044,
+          "daily_mae": 6.38,
+          "daily_mape": 0.091,
+          "week_bias": -0.0112,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.907,
+          "daily_mae": 3.7,
+          "daily_mape": 0.0589,
+          "week_bias": 0.0008,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "week_from": "2026-09-07",
+      "training_days": 26,
+      "actual_orders": 446,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.066,
+          "daily_mae": 10.05,
+          "daily_mape": 0.2121,
+          "week_bias": 0.0664,
+          "peak_hour_within_1h": 0.286
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.954,
+          "daily_mae": 8.14,
+          "daily_mape": 0.1586,
+          "week_bias": 0.0067,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.012,
+          "daily_mae": 8,
+          "daily_mape": 0.1397,
+          "week_bias": -0.0269,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 0.954,
+          "daily_mae": 8.14,
+          "daily_mape": 0.1586,
+          "week_bias": 0.0067,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.933,
+          "daily_mae": 10.03,
+          "daily_mape": 0.1895,
+          "week_bias": -0.0038,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "week_from": "2026-09-14",
+      "training_days": 33,
+      "actual_orders": 449,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.09,
+          "daily_mae": 3.29,
+          "daily_mape": 0.0496,
+          "week_bias": 0.0422,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.095,
+          "daily_mae": 3.24,
+          "daily_mape": 0.0525,
+          "week_bias": -0.0059,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.22,
+          "daily_mae": 7.86,
+          "daily_mape": 0.1404,
+          "week_bias": -0.0067,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 1.095,
+          "daily_mae": 3.24,
+          "daily_mape": 0.0525,
+          "week_bias": -0.0059,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.903,
+          "daily_mae": 4.54,
+          "daily_mape": 0.0719,
+          "week_bias": 0.0047,
+          "peak_hour_within_1h": 1.0
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "week_from": "2026-09-21",
+      "training_days": 40,
+      "actual_orders": 470,
+      "app_chose": "random_forest",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.937,
+          "daily_mae": 4.27,
+          "daily_mape": 0.062,
+          "week_bias": -0.0162,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.974,
+          "daily_mae": 6.71,
+          "daily_mape": 0.1065,
+          "week_bias": -0.0574,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.137,
+          "daily_mae": 5,
+          "daily_mape": 0.0715,
+          "week_bias": -0.0447,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 0.937,
+          "daily_mae": 4.27,
+          "daily_mape": 0.062,
+          "week_bias": -0.0162,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.838,
+          "daily_mae": 3.63,
+          "daily_mape": 0.0598,
+          "week_bias": -0.0257,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "week_from": "2026-09-28",
+      "training_days": 47,
+      "actual_orders": 461,
+      "app_chose": "random_forest",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.157,
+          "daily_mae": 9.38,
+          "daily_mape": 0.156,
+          "week_bias": 0.0205,
+          "peak_hour_within_1h": 0.429
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.151,
+          "daily_mae": 10.0,
+          "daily_mape": 0.1635,
+          "week_bias": -0.013,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.411,
+          "daily_mae": 10.43,
+          "daily_mape": 0.1615,
+          "week_bias": 0.0195,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 1.157,
+          "daily_mae": 9.38,
+          "daily_mape": 0.156,
+          "week_bias": 0.0205,
+          "peak_hour_within_1h": 0.429
+        },
+        "oracle": {
+          "hourly_mae": 0.965,
+          "daily_mae": 8.64,
+          "daily_mape": 0.1322,
+          "week_bias": 0.0081,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "week_from": "2026-10-05",
+      "training_days": 54,
+      "actual_orders": 454,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.002,
+          "daily_mae": 9.51,
+          "daily_mape": 0.1617,
+          "week_bias": 0.0399,
+          "peak_hour_within_1h": 0.429
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.0,
+          "daily_mae": 6.57,
+          "daily_mape": 0.1078,
+          "week_bias": 0.0132,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.28,
+          "daily_mae": 10.43,
+          "daily_mape": 0.1622,
+          "week_bias": 0.0154,
+          "peak_hour_within_1h": 0.0
+        },
+        "app_policy": {
+          "hourly_mae": 1.0,
+          "daily_mae": 6.57,
+          "daily_mape": 0.1078,
+          "week_bias": 0.0132,
+          "peak_hour_within_1h": 0.429
+        },
+        "oracle": {
+          "hourly_mae": 0.86,
+          "daily_mae": 5.54,
+          "daily_mape": 0.095,
+          "week_bias": 0.0387,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "week_from": "2026-10-12",
+      "training_days": 61,
+      "actual_orders": 481,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.985,
+          "daily_mae": 5.45,
+          "daily_mape": 0.0846,
+          "week_bias": -0.0105,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.052,
+          "daily_mae": 4.48,
+          "daily_mape": 0.0694,
+          "week_bias": -0.0402,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.244,
+          "daily_mae": 5.86,
+          "daily_mape": 0.0901,
+          "week_bias": -0.0561,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 1.052,
+          "daily_mae": 4.48,
+          "daily_mape": 0.0694,
+          "week_bias": -0.0402,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.925,
+          "daily_mae": 4.92,
+          "daily_mape": 0.068,
+          "week_bias": -0.0054,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "week_from": "2026-09-07",
+      "training_days": 26,
+      "actual_orders": 424,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.948,
+          "daily_mae": 11.1,
+          "daily_mape": 0.1917,
+          "week_bias": 0.1578,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.933,
+          "daily_mae": 9.33,
+          "daily_mape": 0.1626,
+          "week_bias": 0.0786,
+          "peak_hour_within_1h": 0.857
+        },
+        "last_week": {
+          "hourly_mae": 1.19,
+          "daily_mae": 12.86,
+          "daily_mape": 0.2175,
+          "week_bias": 0.1132,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 0.933,
+          "daily_mae": 9.33,
+          "daily_mape": 0.1626,
+          "week_bias": 0.0786,
+          "peak_hour_within_1h": 0.857
+        },
+        "oracle": {
+          "hourly_mae": 0.823,
+          "daily_mae": 8.16,
+          "daily_mape": 0.1294,
+          "week_bias": 0.0479,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "week_from": "2026-09-14",
+      "training_days": 33,
+      "actual_orders": 466,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.035,
+          "daily_mae": 4.95,
+          "daily_mape": 0.0855,
+          "week_bias": -0.0034,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.032,
+          "daily_mae": 3.05,
+          "daily_mape": 0.0482,
+          "week_bias": -0.0343,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.071,
+          "daily_mae": 7.43,
+          "daily_mape": 0.1031,
+          "week_bias": -0.0901,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 1.032,
+          "daily_mae": 3.05,
+          "daily_mape": 0.0482,
+          "week_bias": -0.0343,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.968,
+          "daily_mae": 3.98,
+          "daily_mape": 0.0555,
+          "week_bias": -0.0319,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "week_from": "2026-09-21",
+      "training_days": 40,
+      "actual_orders": 471,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.073,
+          "daily_mae": 6.09,
+          "daily_mape": 0.0845,
+          "week_bias": -0.0324,
+          "peak_hour_within_1h": 0.857
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.069,
+          "daily_mae": 6.62,
+          "daily_mape": 0.0899,
+          "week_bias": -0.0361,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.351,
+          "daily_mae": 6.14,
+          "daily_mape": 0.0911,
+          "week_bias": -0.0106,
+          "peak_hour_within_1h": 0.571
+        },
+        "app_policy": {
+          "hourly_mae": 1.069,
+          "daily_mae": 6.62,
+          "daily_mape": 0.0899,
+          "week_bias": -0.0361,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.81,
+          "daily_mae": 3.41,
+          "daily_mape": 0.0488,
+          "week_bias": -0.0277,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "week_from": "2026-09-28",
+      "training_days": 47,
+      "actual_orders": 438,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.171,
+          "daily_mae": 11.86,
+          "daily_mape": 0.1994,
+          "week_bias": 0.0772,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.157,
+          "daily_mae": 9.1,
+          "daily_mape": 0.1428,
+          "week_bias": 0.0358,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.232,
+          "daily_mae": 7.29,
+          "daily_mape": 0.1225,
+          "week_bias": 0.0753,
+          "peak_hour_within_1h": 0.286
+        },
+        "app_policy": {
+          "hourly_mae": 1.157,
+          "daily_mae": 9.1,
+          "daily_mape": 0.1428,
+          "week_bias": 0.0358,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.976,
+          "daily_mae": 7.18,
+          "daily_mape": 0.123,
+          "week_bias": 0.0611,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "week_from": "2026-10-05",
+      "training_days": 54,
+      "actual_orders": 449,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.933,
+          "daily_mae": 6.97,
+          "daily_mape": 0.12,
+          "week_bias": 0.0319,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.853,
+          "daily_mae": 7.52,
+          "daily_mape": 0.1249,
+          "week_bias": 0.0208,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.161,
+          "daily_mae": 11.29,
+          "daily_mape": 0.1768,
+          "week_bias": -0.0245,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 0.853,
+          "daily_mae": 7.52,
+          "daily_mape": 0.1249,
+          "week_bias": 0.0208,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.821,
+          "daily_mae": 7.36,
+          "daily_mape": 0.1246,
+          "week_bias": 0.0503,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "week_from": "2026-10-12",
+      "training_days": 61,
+      "actual_orders": 471,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.066,
+          "daily_mae": 8.69,
+          "daily_mape": 0.1396,
+          "week_bias": -0.0317,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.149,
+          "daily_mae": 6.14,
+          "daily_mape": 0.0991,
+          "week_bias": -0.0389,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.298,
+          "daily_mae": 10.29,
+          "daily_mape": 0.1668,
+          "week_bias": -0.0467,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 1.149,
+          "daily_mae": 6.14,
+          "daily_mape": 0.0991,
+          "week_bias": -0.0389,
+          "peak_hour_within_1h": 0.429
+        },
+        "oracle": {
+          "hourly_mae": 0.901,
+          "daily_mae": 4.23,
+          "daily_mape": 0.0738,
+          "week_bias": 0.0157,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "week_from": "2026-09-07",
+      "training_days": 26,
+      "actual_orders": 465,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.265,
+          "daily_mae": 7.67,
+          "daily_mape": 0.1416,
+          "week_bias": 0.0011,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.196,
+          "daily_mae": 7.76,
+          "daily_mape": 0.1428,
+          "week_bias": -0.0294,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.298,
+          "daily_mae": 8.57,
+          "daily_mape": 0.1644,
+          "week_bias": 0.0,
+          "peak_hour_within_1h": 0.286
+        },
+        "app_policy": {
+          "hourly_mae": 1.196,
+          "daily_mae": 7.76,
+          "daily_mape": 0.1428,
+          "week_bias": -0.0294,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.995,
+          "daily_mae": 8.42,
+          "daily_mape": 0.1401,
+          "week_bias": -0.0445,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "week_from": "2026-09-14",
+      "training_days": 33,
+      "actual_orders": 473,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.963,
+          "daily_mae": 3.61,
+          "daily_mape": 0.0525,
+          "week_bias": -0.0213,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.931,
+          "daily_mae": 5.38,
+          "daily_mape": 0.0756,
+          "week_bias": -0.0374,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.25,
+          "daily_mae": 9.71,
+          "daily_mape": 0.1445,
+          "week_bias": -0.0169,
+          "peak_hour_within_1h": 0.286
+        },
+        "app_policy": {
+          "hourly_mae": 0.931,
+          "daily_mae": 5.38,
+          "daily_mape": 0.0756,
+          "week_bias": -0.0374,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.83,
+          "daily_mae": 4.93,
+          "daily_mape": 0.0768,
+          "week_bias": -0.0462,
+          "peak_hour_within_1h": 0.857
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "week_from": "2026-09-21",
+      "training_days": 40,
+      "actual_orders": 442,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.924,
+          "daily_mae": 8.07,
+          "daily_mape": 0.1446,
+          "week_bias": 0.0796,
+          "peak_hour_within_1h": 0.429
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.8,
+          "daily_mae": 7.1,
+          "daily_mape": 0.1299,
+          "week_bias": 0.0581,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 0.982,
+          "daily_mae": 9.57,
+          "daily_mape": 0.165,
+          "week_bias": 0.0701,
+          "peak_hour_within_1h": 0.857
+        },
+        "app_policy": {
+          "hourly_mae": 0.8,
+          "daily_mae": 7.1,
+          "daily_mape": 0.1299,
+          "week_bias": 0.0581,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.76,
+          "daily_mae": 5.01,
+          "daily_mape": 0.0828,
+          "week_bias": 0.0361,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "week_from": "2026-09-28",
+      "training_days": 47,
+      "actual_orders": 462,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.98,
+          "daily_mae": 6.69,
+          "daily_mape": 0.1279,
+          "week_bias": 0.0197,
+          "peak_hour_within_1h": 0.286
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.032,
+          "daily_mae": 7.14,
+          "daily_mape": 0.1304,
+          "week_bias": -0.0043,
+          "peak_hour_within_1h": 0.286
+        },
+        "last_week": {
+          "hourly_mae": 1.155,
+          "daily_mae": 8,
+          "daily_mape": 0.1302,
+          "week_bias": -0.0433,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 1.032,
+          "daily_mae": 7.14,
+          "daily_mape": 0.1304,
+          "week_bias": -0.0043,
+          "peak_hour_within_1h": 0.286
+        },
+        "oracle": {
+          "hourly_mae": 0.946,
+          "daily_mae": 5.16,
+          "daily_mape": 0.097,
+          "week_bias": 0.006,
+          "peak_hour_within_1h": 0.429
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "week_from": "2026-10-05",
+      "training_days": 54,
+      "actual_orders": 464,
+      "app_chose": "random_forest",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.943,
+          "daily_mae": 4.45,
+          "daily_mape": 0.0682,
+          "week_bias": 0.006,
+          "peak_hour_within_1h": 0.857
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.994,
+          "daily_mae": 4.62,
+          "daily_mape": 0.0687,
+          "week_bias": -0.0108,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.274,
+          "daily_mae": 6.57,
+          "daily_mape": 0.1072,
+          "week_bias": -0.0043,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 0.943,
+          "daily_mae": 4.45,
+          "daily_mape": 0.0682,
+          "week_bias": 0.006,
+          "peak_hour_within_1h": 0.857
+        },
+        "oracle": {
+          "hourly_mae": 0.891,
+          "daily_mae": 4.1,
+          "daily_mape": 0.059,
+          "week_bias": 0.0163,
+          "peak_hour_within_1h": 0.714
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "week_from": "2026-10-12",
+      "training_days": 61,
+      "actual_orders": 447,
+      "app_chose": "random_forest",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.284,
+          "daily_mae": 6.83,
+          "daily_mape": 0.1302,
+          "week_bias": 0.0219,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.26,
+          "daily_mae": 6.9,
+          "daily_mape": 0.1329,
+          "week_bias": 0.0201,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.339,
+          "daily_mae": 8.43,
+          "daily_mape": 0.162,
+          "week_bias": 0.038,
+          "peak_hour_within_1h": 0.857
+        },
+        "app_policy": {
+          "hourly_mae": 1.284,
+          "daily_mae": 6.83,
+          "daily_mape": 0.1302,
+          "week_bias": 0.0219,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 1.092,
+          "daily_mae": 8.17,
+          "daily_mape": 0.1585,
+          "week_bias": 0.0702,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "week_from": "2026-09-07",
+      "training_days": 26,
+      "actual_orders": 467,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.913,
+          "daily_mae": 8.55,
+          "daily_mape": 0.1155,
+          "week_bias": -0.0716,
+          "peak_hour_within_1h": 0.571
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.901,
+          "daily_mae": 9.24,
+          "daily_mape": 0.128,
+          "week_bias": -0.0842,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.208,
+          "daily_mae": 8.14,
+          "daily_mape": 0.1163,
+          "week_bias": -0.0749,
+          "peak_hour_within_1h": 0.571
+        },
+        "app_policy": {
+          "hourly_mae": 0.901,
+          "daily_mae": 9.24,
+          "daily_mape": 0.128,
+          "week_bias": -0.0842,
+          "peak_hour_within_1h": 0.429
+        },
+        "oracle": {
+          "hourly_mae": 0.793,
+          "daily_mae": 6.75,
+          "daily_mape": 0.0922,
+          "week_bias": -0.0486,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "week_from": "2026-09-14",
+      "training_days": 33,
+      "actual_orders": 467,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.084,
+          "daily_mae": 10.74,
+          "daily_mape": 0.2011,
+          "week_bias": -0.0198,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.083,
+          "daily_mae": 8.67,
+          "daily_mape": 0.1489,
+          "week_bias": -0.0571,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.274,
+          "daily_mae": 10.29,
+          "daily_mape": 0.1844,
+          "week_bias": 0.0,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 1.083,
+          "daily_mae": 8.67,
+          "daily_mape": 0.1489,
+          "week_bias": -0.0571,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.947,
+          "daily_mae": 7.34,
+          "daily_mape": 0.1296,
+          "week_bias": -0.034,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "week_from": "2026-09-21",
+      "training_days": 40,
+      "actual_orders": 524,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 0.929,
+          "daily_mae": 8.35,
+          "daily_mape": 0.1041,
+          "week_bias": -0.0973,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 0.972,
+          "daily_mae": 9.81,
+          "daily_mape": 0.1282,
+          "week_bias": -0.131,
+          "peak_hour_within_1h": 0.429
+        },
+        "last_week": {
+          "hourly_mae": 1.173,
+          "daily_mae": 11,
+          "daily_mape": 0.157,
+          "week_bias": -0.1088,
+          "peak_hour_within_1h": 0.429
+        },
+        "app_policy": {
+          "hourly_mae": 0.972,
+          "daily_mae": 9.81,
+          "daily_mape": 0.1282,
+          "week_bias": -0.131,
+          "peak_hour_within_1h": 0.429
+        },
+        "oracle": {
+          "hourly_mae": 0.84,
+          "daily_mae": 9.44,
+          "daily_mape": 0.1169,
+          "week_bias": -0.1261,
+          "peak_hour_within_1h": 0.571
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "week_from": "2026-09-28",
+      "training_days": 47,
+      "actual_orders": 479,
+      "app_chose": "random_forest",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.167,
+          "daily_mae": 9.95,
+          "daily_mape": 0.1382,
+          "week_bias": 0.0652,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.145,
+          "daily_mae": 7.1,
+          "daily_mape": 0.0964,
+          "week_bias": 0.0146,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.423,
+          "daily_mae": 11.57,
+          "daily_mape": 0.1581,
+          "week_bias": 0.0939,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 1.167,
+          "daily_mae": 9.95,
+          "daily_mape": 0.1382,
+          "week_bias": 0.0652,
+          "peak_hour_within_1h": 0.714
+        },
+        "oracle": {
+          "hourly_mae": 0.96,
+          "daily_mae": 6.51,
+          "daily_mape": 0.0867,
+          "week_bias": -0.0297,
+          "peak_hour_within_1h": 0.857
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "week_from": "2026-10-05",
+      "training_days": 54,
+      "actual_orders": 463,
+      "app_chose": "weekly_baseline",
+      "app_choice_was_better": false,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.035,
+          "daily_mae": 10.12,
+          "daily_mape": 0.1724,
+          "week_bias": 0.0676,
+          "peak_hour_within_1h": 0.714
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.054,
+          "daily_mae": 10.24,
+          "daily_mape": 0.1708,
+          "week_bias": 0.0583,
+          "peak_hour_within_1h": 0.571
+        },
+        "last_week": {
+          "hourly_mae": 1.31,
+          "daily_mae": 10,
+          "daily_mape": 0.1629,
+          "week_bias": 0.0346,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 1.054,
+          "daily_mae": 10.24,
+          "daily_mape": 0.1708,
+          "week_bias": 0.0583,
+          "peak_hour_within_1h": 0.571
+        },
+        "oracle": {
+          "hourly_mae": 0.851,
+          "daily_mae": 9.06,
+          "daily_mape": 0.1543,
+          "week_bias": 0.0185,
+          "peak_hour_within_1h": 0.857
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "week_from": "2026-10-12",
+      "training_days": 61,
+      "actual_orders": 528,
+      "app_chose": "random_forest",
+      "app_choice_was_better": true,
+      "scores": {
+        "random_forest": {
+          "hourly_mae": 1.188,
+          "daily_mae": 7.81,
+          "daily_mape": 0.1124,
+          "week_bias": -0.0584,
+          "peak_hour_within_1h": 0.857
+        },
+        "weekly_baseline": {
+          "hourly_mae": 1.226,
+          "daily_mae": 9.62,
+          "daily_mape": 0.1436,
+          "week_bias": -0.0745,
+          "peak_hour_within_1h": 0.714
+        },
+        "last_week": {
+          "hourly_mae": 1.446,
+          "daily_mae": 15.86,
+          "daily_mape": 0.2304,
+          "week_bias": -0.1231,
+          "peak_hour_within_1h": 0.714
+        },
+        "app_policy": {
+          "hourly_mae": 1.188,
+          "daily_mae": 7.81,
+          "daily_mape": 0.1124,
+          "week_bias": -0.0584,
+          "peak_hour_within_1h": 0.857
+        },
+        "oracle": {
+          "hourly_mae": 1.053,
+          "daily_mae": 9.69,
+          "daily_mape": 0.1356,
+          "week_bias": -0.094,
+          "peak_hour_within_1h": 0.857
+        }
+      }
+    }
+  ]
+}

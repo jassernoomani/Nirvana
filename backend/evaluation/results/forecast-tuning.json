@@ -1,0 +1,243 @@
+{
+  "date": "2026-10-19 20:31",
+  "seeds": [
+    2026,
+    1,
+    2,
+    3,
+    4
+  ],
+  "weeks": 6,
+  "tuning_weeks_per_seed": 3,
+  "tuning": [
+    {
+      "name": "poisson regression alpha=0.0001 no trend",
+      "family": "poisson_regression",
+      "hourly_mae": 0.9067
+    },
+    {
+      "name": "poisson regression alpha=0.0001 trend",
+      "family": "poisson_regression",
+      "hourly_mae": 0.9089
+    },
+    {
+      "name": "poisson regression alpha=0.001 no trend",
+      "family": "poisson_regression",
+      "hourly_mae": 0.9301
+    },
+    {
+      "name": "poisson regression alpha=0.001 trend",
+      "family": "poisson_regression",
+      "hourly_mae": 0.9303
+    },
+    {
+      "name": "forest + lag mean",
+      "family": "random_forest_features",
+      "hourly_mae": 1.0055
+    },
+    {
+      "name": "boosting poisson lr=0.1 leaves=7",
+      "family": "gradient_boosting",
+      "hourly_mae": 1.0096
+    },
+    {
+      "name": "boosting poisson lr=0.05 leaves=7",
+      "family": "gradient_boosting",
+      "hourly_mae": 1.0115
+    },
+    {
+      "name": "forest trees=80 depth=5 leaf=3",
+      "family": "random_forest",
+      "hourly_mae": 1.0209
+    },
+    {
+      "name": "forest trees=200 depth=5 leaf=3",
+      "family": "random_forest",
+      "hourly_mae": 1.0233
+    },
+    {
+      "name": "forest trees=80 depth=10 leaf=10",
+      "family": "random_forest",
+      "hourly_mae": 1.0269
+    },
+    {
+      "name": "forest trees=80 depth=None leaf=10",
+      "family": "random_forest",
+      "hourly_mae": 1.0269
+    },
+    {
+      "name": "forest trees=80 depth=5 leaf=10",
+      "family": "random_forest",
+      "hourly_mae": 1.0274
+    },
+    {
+      "name": "boosting poisson lr=0.05 leaves=15",
+      "family": "gradient_boosting",
+      "hourly_mae": 1.0276
+    },
+    {
+      "name": "forest trees=200 depth=10 leaf=3",
+      "family": "random_forest",
+      "hourly_mae": 1.0283
+    },
+    {
+      "name": "forest trees=80 depth=10 leaf=3",
+      "family": "random_forest",
+      "hourly_mae": 1.0285
+    },
+    {
+      "name": "forest trees=200 depth=None leaf=3",
+      "family": "random_forest",
+      "hourly_mae": 1.0288
+    },
+    {
+      "name": "forest trees=80 depth=None leaf=3",
+      "family": "random_forest",
+      "hourly_mae": 1.0294
+    },
+    {
+      "name": "forest trees=200 depth=10 leaf=10",
+      "family": "random_forest",
+      "hourly_mae": 1.0301
+    },
+    {
+      "name": "forest trees=200 depth=None leaf=10",
+      "family": "random_forest",
+      "hourly_mae": 1.0301
+    },
+    {
+      "name": "forest trees=200 depth=5 leaf=10",
+      "family": "random_forest",
+      "hourly_mae": 1.0305
+    },
+    {
+      "name": "forest + trend",
+      "family": "random_forest_features",
+      "hourly_mae": 1.0305
+    },
+    {
+      "name": "boosting poisson lr=0.1 leaves=15",
+      "family": "gradient_boosting",
+      "hourly_mae": 1.0495
+    },
+    {
+      "name": "poisson regression alpha=0.01 trend",
+      "family": "poisson_regression",
+      "hourly_mae": 1.0656
+    },
+    {
+      "name": "poisson regression alpha=0.01 no trend",
+      "family": "poisson_regression",
+      "hourly_mae": 1.0721
+    },
+    {
+      "name": "forest trees=80 depth=5 leaf=30",
+      "family": "random_forest",
+      "hourly_mae": 1.078
+    },
+    {
+      "name": "forest trees=80 depth=10 leaf=30",
+      "family": "random_forest",
+      "hourly_mae": 1.078
+    },
+    {
+      "name": "forest trees=80 depth=None leaf=30",
+      "family": "random_forest",
+      "hourly_mae": 1.078
+    },
+    {
+      "name": "forest trees=200 depth=5 leaf=30",
+      "family": "random_forest",
+      "hourly_mae": 1.08
+    },
+    {
+      "name": "forest trees=200 depth=10 leaf=30",
+      "family": "random_forest",
+      "hourly_mae": 1.08
+    },
+    {
+      "name": "forest trees=200 depth=None leaf=30",
+      "family": "random_forest",
+      "hourly_mae": 1.08
+    }
+  ],
+  "report": [
+    {
+      "name": "app forest (current settings)",
+      "tuning_hourly_mae": 1.0285,
+      "report": {
+        "hourly_mae": 1.0641,
+        "daily_mae": 7.9873,
+        "daily_mape": 0.1303,
+        "week_bias": 0.0163,
+        "peak_hour_within_1h": 0.6189
+      }
+    },
+    {
+      "name": "forest trees=80 depth=5 leaf=3 [best random_forest]",
+      "tuning_hourly_mae": 1.0209,
+      "report": {
+        "hourly_mae": 1.069,
+        "daily_mae": 7.9993,
+        "daily_mape": 0.1319,
+        "week_bias": 0.0187,
+        "peak_hour_within_1h": 0.6569
+      }
+    },
+    {
+      "name": "boosting poisson lr=0.1 leaves=7 [best gradient_boosting]",
+      "tuning_hourly_mae": 1.0096,
+      "report": {
+        "hourly_mae": 1.0351,
+        "daily_mae": 7.448,
+        "daily_mape": 0.1168,
+        "week_bias": -0.0092,
+        "peak_hour_within_1h": 0.6189
+      }
+    },
+    {
+      "name": "poisson regression alpha=0.0001 no trend [best poisson_regression]",
+      "tuning_hourly_mae": 0.9067,
+      "report": {
+        "hourly_mae": 0.9389,
+        "daily_mae": 7.256,
+        "daily_mape": 0.113,
+        "week_bias": -0.035,
+        "peak_hour_within_1h": 0.6855
+      }
+    },
+    {
+      "name": "forest + lag mean [best random_forest_features]",
+      "tuning_hourly_mae": 1.0055,
+      "report": {
+        "hourly_mae": 1.0506,
+        "daily_mae": 7.8693,
+        "daily_mape": 0.1296,
+        "week_bias": 0.0167,
+        "peak_hour_within_1h": 0.5809
+      }
+    },
+    {
+      "name": "weekly baseline",
+      "tuning_hourly_mae": 1.0061,
+      "report": {
+        "hourly_mae": 1.077,
+        "daily_mae": 7.4507,
+        "daily_mape": 0.1192,
+        "week_bias": -0.0047,
+        "peak_hour_within_1h": 0.5427
+      }
+    },
+    {
+      "name": "oracle (true rate)",
+      "tuning_hourly_mae": null,
+      "report": {
+        "hourly_mae": 0.929,
+        "daily_mae": 6.554,
+        "daily_mape": 0.1057,
+        "week_bias": 0.0097,
+        "peak_hour_within_1h": 0.6855
+      }
+    }
+  ]
+}

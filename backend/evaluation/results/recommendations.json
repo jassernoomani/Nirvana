@@ -1,0 +1,222 @@
+{
+  "date": "2026-10-19 20:45",
+  "seeds": [
+    2026,
+    1,
+    2
+  ],
+  "hidden_days": 14,
+  "top": 6,
+  "model": "qwen2.5:3b",
+  "safety": {
+    "2026": {
+      "seeded customers": {
+        "customers": 120,
+        "dishes_shown": 720,
+        "violations": [],
+        "empty_lists": 0
+      },
+      "synthetic allergy profiles": {
+        "customers": 90,
+        "dishes_shown": 539,
+        "violations": [],
+        "empty_lists": 0
+      },
+      "with local-model re-ranking": {
+        "customers": 40,
+        "dishes_shown": 240,
+        "violations": [],
+        "fallbacks": 0
+      }
+    },
+    "1": {
+      "seeded customers": {
+        "customers": 120,
+        "dishes_shown": 720,
+        "violations": [],
+        "empty_lists": 0
+      },
+      "synthetic allergy profiles": {
+        "customers": 90,
+        "dishes_shown": 539,
+        "violations": [],
+        "empty_lists": 0
+      }
+    },
+    "2": {
+      "seeded customers": {
+        "customers": 120,
+        "dishes_shown": 720,
+        "violations": [],
+        "empty_lists": 0
+      },
+      "synthetic allergy profiles": {
+        "customers": 90,
+        "dishes_shown": 539,
+        "violations": [],
+        "empty_lists": 0
+      }
+    }
+  },
+  "menu_data_audit": [
+    {
+      "dish": "Crispy Calamari",
+      "allergen": "unknown (sauce or dressing not broken down in the recipe)",
+      "words": [
+        "sauce",
+        "dip"
+      ]
+    },
+    {
+      "dish": "Mediterranean Salad",
+      "allergen": "unknown (sauce or dressing not broken down in the recipe)",
+      "words": [
+        "dressing"
+      ]
+    },
+    {
+      "dish": "Grilled Chicken Salad",
+      "allergen": "unknown (sauce or dressing not broken down in the recipe)",
+      "words": [
+        "dressing"
+      ]
+    },
+    {
+      "dish": "Quinoa Garden Bowl",
+      "allergen": "unknown (sauce or dressing not broken down in the recipe)",
+      "words": [
+        "dressing"
+      ]
+    }
+  ],
+  "relevance": {
+    "app ranking": {
+      "customers": 351,
+      "next_order_hit": 0.821,
+      "next_order_recall": 0.352,
+      "hit_rate": 0.977,
+      "precision_at_6": 0.637,
+      "recall_at_6": 0.33,
+      "distinct_dishes_recommended": 27
+    },
+    "popularity": {
+      "customers": 351,
+      "next_order_hit": 0.912,
+      "next_order_recall": 0.435,
+      "hit_rate": 0.994,
+      "precision_at_6": 0.697,
+      "recall_at_6": 0.367,
+      "distinct_dishes_recommended": 11
+    },
+    "random": {
+      "customers": 351,
+      "next_order_hit": 0.684,
+      "next_order_recall": 0.275,
+      "hit_rate": 0.954,
+      "precision_at_6": 0.516,
+      "recall_at_6": 0.262,
+      "distinct_dishes_recommended": 27
+    },
+    "score, popularity weight 2": {
+      "customers": 351,
+      "next_order_hit": 0.823,
+      "next_order_recall": 0.356,
+      "hit_rate": 0.974,
+      "precision_at_6": 0.646,
+      "recall_at_6": 0.335,
+      "distinct_dishes_recommended": 27
+    },
+    "score, popularity weight 4": {
+      "customers": 351,
+      "next_order_hit": 0.835,
+      "next_order_recall": 0.385,
+      "hit_rate": 0.977,
+      "precision_at_6": 0.678,
+      "recall_at_6": 0.357,
+      "distinct_dishes_recommended": 27
+    },
+    "score, popularity weight 8": {
+      "customers": 351,
+      "next_order_hit": 0.9,
+      "next_order_recall": 0.444,
+      "hit_rate": 0.989,
+      "precision_at_6": 0.723,
+      "recall_at_6": 0.384,
+      "distinct_dishes_recommended": 27
+    },
+    "app + local-model re-ranking": {
+      "customers": 118,
+      "next_order_hit": 0.72,
+      "next_order_recall": 0.292,
+      "hit_rate": 0.949,
+      "precision_at_6": 0.576,
+      "recall_at_6": 0.293,
+      "distinct_dishes_recommended": 27
+    }
+  },
+  "relevance_first_seed": {
+    "app ranking": {
+      "customers": 118,
+      "next_order_hit": 0.797,
+      "next_order_recall": 0.345,
+      "hit_rate": 0.966,
+      "precision_at_6": 0.626,
+      "recall_at_6": 0.322,
+      "distinct_dishes_recommended": 27
+    },
+    "popularity": {
+      "customers": 118,
+      "next_order_hit": 0.915,
+      "next_order_recall": 0.451,
+      "hit_rate": 1,
+      "precision_at_6": 0.715,
+      "recall_at_6": 0.386,
+      "distinct_dishes_recommended": 9
+    },
+    "random": {
+      "customers": 118,
+      "next_order_hit": 0.695,
+      "next_order_recall": 0.275,
+      "hit_rate": 0.958,
+      "precision_at_6": 0.503,
+      "recall_at_6": 0.256,
+      "distinct_dishes_recommended": 27
+    },
+    "score, popularity weight 2": {
+      "customers": 118,
+      "next_order_hit": 0.822,
+      "next_order_recall": 0.357,
+      "hit_rate": 0.966,
+      "precision_at_6": 0.637,
+      "recall_at_6": 0.327,
+      "distinct_dishes_recommended": 27
+    },
+    "score, popularity weight 4": {
+      "customers": 118,
+      "next_order_hit": 0.839,
+      "next_order_recall": 0.391,
+      "hit_rate": 0.975,
+      "precision_at_6": 0.667,
+      "recall_at_6": 0.347,
+      "distinct_dishes_recommended": 27
+    },
+    "score, popularity weight 8": {
+      "customers": 118,
+      "next_order_hit": 0.924,
+      "next_order_recall": 0.462,
+      "hit_rate": 0.992,
+      "precision_at_6": 0.723,
+      "recall_at_6": 0.382,
+      "distinct_dishes_recommended": 27
+    },
+    "app + local-model re-ranking": {
+      "customers": 118,
+      "next_order_hit": 0.72,
+      "next_order_recall": 0.292,
+      "hit_rate": 0.949,
+      "precision_at_6": 0.576,
+      "recall_at_6": 0.293,
+      "distinct_dishes_recommended": 27
+    }
+  }
+}

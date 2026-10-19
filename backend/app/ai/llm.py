@@ -15,6 +15,10 @@ class LocalModelError(RuntimeError):
     pass
 
 
+class ModelUnavailable(LocalModelError):
+    """The model cannot be reached or is busy: retrying other reviews now would only wait for timeouts."""
+
+
 def settings():
     return {'base_url': os.getenv('OLLAMA_BASE_URL', 'http://127.0.0.1:11434').rstrip('/'),
             'model': os.getenv('LLM_MODEL', 'qwen2.5:3b'),
@@ -25,7 +29,7 @@ def request_json(path, body=None):
     config = settings()
     parsed = urlparse(config['base_url'])
     if parsed.scheme != 'http' or parsed.hostname not in ('localhost', '127.0.0.1', '::1') or parsed.username or parsed.password:
-        raise LocalModelError('Configure OLLAMA_BASE_URL as a local HTTP Ollama endpoint.')
+        raise ModelUnavailable('Configure OLLAMA_BASE_URL as a local HTTP Ollama endpoint.')
     req = Request(config['base_url'] + path, data=json.dumps(body).encode() if body is not None else None,
                   headers={'Content-Type': 'application/json'})
     try:
@@ -35,7 +39,7 @@ def request_json(path, body=None):
                 raise LocalModelError('The local model response exceeded the size limit.')
             return json.loads(raw)
     except (URLError, HTTPError, TimeoutError, OSError, ValueError) as exc:
-        raise LocalModelError('Local model unavailable or response invalid. Check Ollama, LLM_MODEL and the configured timeout.') from exc
+        raise ModelUnavailable('Local model unavailable or response invalid. Check Ollama, LLM_MODEL and the configured timeout.') from exc
 
 
 def status():
@@ -51,7 +55,7 @@ def status():
 
 def generate(system: str, payload: dict, schema: type[BaseModel]):
     if not _lock.acquire(timeout=2):
-        raise LocalModelError('Local model is busy. Try again after the current analysis finishes.')
+        raise ModelUnavailable('Local model is busy. Try again after the current analysis finishes.')
     try:
         result = request_json('/api/chat', {'model': settings()['model'], 'stream': False,
             'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': json.dumps(payload)}],

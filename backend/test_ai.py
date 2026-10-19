@@ -11,7 +11,7 @@ from app.main import app
 from app.ai import llm, prompts
 from app.ai.forecast import features, forecast
 from app.ai.recommendations import RankedIds, recommend
-from app.ai.reviews import Batch, Summary, analyze, redact
+from app.ai.reviews import QuotedBatch, Summary, analyze, redact, sentiment_from
 import seed_data
 
 
@@ -111,7 +111,7 @@ class AiTests(unittest.TestCase):
             self.assertNotIn('person@example.com', str(payload))
             self.assertNotIn('+216', str(payload))
             self.assertNotIn('system prompt', str(payload))
-            return Batch(reviews=[{'id': e['id'], 'sentiment': 'negative' if 'Cold' in e['text'] else 'positive',
+            return QuotedBatch(reviews=[{'id': e['id'], 'praise': [] if 'Cold' in e['text'] else [e['text'][:6]],
                  'complaints': [{'topic': 'cold_food', 'quote': 'Cold food'}] if 'Cold' in e['text'] else []} for e in payload['reviews']])
         with patch('app.ai.llm.generate', side_effect=fake):
             report = analyze(30, 8)
@@ -128,12 +128,65 @@ class AiTests(unittest.TestCase):
     def test_hallucinated_evidence_is_rejected(self):
         self.review_rows()
         def fake(system, payload, schema):
-            return Batch(reviews=[{'id': e['id'], 'sentiment': 'negative', 'complaints': [{'topic': 'noise', 'quote': 'invented quote'}]} for e in payload['reviews']])
+            return QuotedBatch(reviews=[{'id': e['id'], 'praise': [], 'complaints': [{'topic': 'noise', 'quote': 'invented quote'}]} for e in payload['reviews']])
         with patch('app.ai.llm.generate', side_effect=fake):
             report = analyze(30, 8)
         self.assertEqual(report['analyzed_count'], 0)
         self.assertTrue(report['warnings'])
         self.assertIsNone(report['insights'])
+
+    def test_one_unusable_answer_does_not_stop_the_analysis(self):
+        # Regression from the model evaluation: a single rejected answer used to stop the whole analysis.
+        self.review_rows()
+        calls = []
+        def fake(system, payload, schema):
+            if system == prompts.REVIEW_SUMMARY:
+                return Summary(summary='One review reports cold food.', actions=[])
+            calls.append(payload)
+            review = payload['reviews'][0]
+            if len(calls) == 1:  # unusable: a complaint quote that is not in the review
+                return QuotedBatch(reviews=[{'id': review['id'], 'praise': [], 'complaints': [{'topic': 'other', 'quote': 'not in the text'}]}])
+            return QuotedBatch(reviews=[{'id': review['id'], 'praise': [], 'complaints': []}])
+        with patch('app.ai.llm.generate', side_effect=fake):
+            report = analyze(30, 8)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(report['analyzed_count'], 1)
+        self.assertEqual(report['pending_count'], 1)
+        self.assertEqual(len(report['warnings']), 1)
+
+    def test_sentiment_is_derived_from_verified_quotes(self):
+        self.assertEqual([sentiment_from(['Great soup'], ['c']), sentiment_from([], ['c']), sentiment_from(['Great soup'], []),
+                          sentiment_from([], [])], ['mixed', 'negative', 'positive', 'neutral'])
+        self.review_rows()
+        def fake(system, payload, schema):
+            if system == prompts.REVIEW_SUMMARY:
+                return Summary(summary='Sample summary.', actions=[])
+            review = payload['reviews'][0]
+            # Praise quoted correctly, plus one invented praise quote that must be ignored.
+            return QuotedBatch(reviews=[{'id': review['id'], 'praise': [review['text'][:6], 'invented praise'], 'complaints': []}])
+        with patch('app.ai.llm.generate', side_effect=fake):
+            report = analyze(30, 8)
+        self.assertEqual(report['sentiments'], {'positive': report['analyzed_count']})
+        def invented_only(system, payload, schema):
+            if system == prompts.REVIEW_SUMMARY:
+                return Summary(summary='Sample summary.', actions=[])
+            return QuotedBatch(reviews=[{'id': payload['reviews'][0]['id'], 'praise': ['invented praise'], 'complaints': []}])
+        with database.get_connection() as connection:
+            connection.execute('DELETE FROM ai_review_analysis')
+        with patch('app.ai.llm.generate', side_effect=invented_only):
+            report = analyze(30, 8)
+        self.assertEqual(report['sentiments'], {'neutral': report['analyzed_count']})
+
+    def test_unreachable_model_stops_at_once(self):
+        self.review_rows()
+        calls = []
+        def fake(system, payload, schema):
+            calls.append(system)
+            raise llm.ModelUnavailable('Local model unavailable')
+        with patch('app.ai.llm.generate', side_effect=fake):
+            report = analyze(30, 8)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(report['analyzed_count'], 0)
 
     def test_model_failure_is_visible_and_does_not_fake_analysis(self):
         self.review_rows()

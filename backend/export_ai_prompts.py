@@ -3,7 +3,7 @@ from pathlib import Path
 from app.ai import prompts
 
 sections = [('Recommendation reranking', prompts.RECOMMENDATIONS),
-            ('Review sentiment and complaint extraction', prompts.REVIEW_CLASSIFICATION),
+            ('Review complaint and praise extraction (the sentiment is derived from these quotes in code)', prompts.REVIEW_CLASSIFICATION),
             ('Manager briefing', prompts.REVIEW_SUMMARY)]
 text = '# Exact local AI prompts\n\nVersion: ' + prompts.PROMPT_VERSION + '\n\n'
 text += 'Forecasting uses scikit-learn and has no LLM prompt. The following system prompts are paired with separate JSON data messages.\n\n'

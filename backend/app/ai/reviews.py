@@ -16,7 +16,12 @@ INJECTION = re.compile(
     r'|^\s*(system|assistant|developer)\s*:'
     r'|\byou\s+are\s+now\s+(a|an|the)\b'
     r'|ignor(e|ez|er)\s+(les|toutes\s+les|tes|vos)\s+(instructions|consignes|r[eè]gles)'
-    r'|(tu\s+es|vous\s+[eê]tes)\s+maintenant',
+    r'|(tu\s+es|vous\s+[eê]tes)\s+maintenant'
+    # Phrasings that address the AI directly (found by the model evaluation).
+    r'|\bnote\s+(for|to)\s+(the\s+)?(ai|assistant|model|bot|system)\b'
+    r'|\b(dear|hey|hi)\s+(ai|assistant|chatbot|model)\b'
+    r'|\b(classify|mark|label|tag)\s+(this|it|these|this\s+review|the\s+review|every\s+review|all\s+reviews)\s+as\b'
+    r'|\b(every|all)\s+reviews?\s+(marked|classified|labell?ed)\b',
     re.I | re.M)
 
 
@@ -29,8 +34,25 @@ class Complaint(BaseModel):
 class ClassifiedReview(BaseModel):
     model_config = ConfigDict(extra='forbid')
     id: StrictInt
-    sentiment: Sentiment
+    # Complaints come before sentiment: the model writes fields in this order, so it
+    # lists the problems first and then chooses a sentiment consistent with them.
     complaints: list[Complaint] = Field(max_length=8)
+    sentiment: Sentiment
+
+
+class QuotedReview(BaseModel):
+    """What the model returns: evidence only, no overall judgement."""
+    model_config = ConfigDict(extra='forbid')
+    id: StrictInt
+    complaints: list[Complaint] = Field(max_length=8)
+    praise: list[str] = Field(max_length=8)
+
+
+class QuotedBatch(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    # Exactly one review per call: the schema is enforced while the model writes, so a model
+    # cannot repeat its answer (llama3.2 did, see EVALUATION.md).
+    reviews: list[QuotedReview] = Field(min_length=1, max_length=1)
 
 
 class Batch(BaseModel):
@@ -58,6 +80,43 @@ def redact(text, names=()):
         if len(name) >= 4:
             text = re.sub(re.escape(name), '[name removed]', text, flags=re.I)
     return text
+
+
+COLD_EVIDENCE = re.compile(r'cold|cool|lukewarm|room.temperature|not (?:hot|warm)|froid|ti[eè]de|pas chaud', re.I)
+
+
+def sentiment_from(praise: list[str], complaints: list) -> str:
+    """The overall sentiment follows from the evidence: a fixed rule instead of the model's judgement."""
+    if praise and complaints:
+        return 'mixed'
+    if complaints:
+        return 'negative'
+    return 'positive' if praise else 'neutral'
+
+
+def classify(review_id: int, text: str) -> 'ClassifiedReview':
+    """One model call for one (already redacted) review. Raises LocalModelError for unusable output.
+
+    The model only extracts complaint and praise quotes; the sentiment is derived from them, which
+    the evaluation showed to be far more reliable than asking a small model for "mixed" directly.
+    """
+    result = llm.generate(prompts.REVIEW_CLASSIFICATION, {'reviews': [{'id': review_id, 'text': text}]}, QuotedBatch)
+    if len(result.reviews) != 1 or result.reviews[0].id != review_id:
+        raise llm.LocalModelError('Review IDs did not match the requested sample.')
+    quoted = result.reviews[0]
+    # Praise is evidence too: quotes that are not in the review are ignored.
+    praise = [p for p in quoted.praise if p.strip() and p.strip().casefold() in text.casefold()]
+    return ClassifiedReview(id=review_id, complaints=quoted.complaints, sentiment=sentiment_from(praise, quoted.complaints))
+
+
+def validate(review: 'ClassifiedReview', text: str) -> None:
+    """Reject a classification that the review text does not support. Raises LocalModelError."""
+    if any(complaint.quote.casefold() not in text.casefold() for complaint in review.complaints):
+        raise llm.LocalModelError('The model returned a complaint without a matching evidence quote.')
+    if any(complaint.topic == 'cold_food' and not COLD_EVIDENCE.search(complaint.quote) for complaint in review.complaints):
+        raise llm.LocalModelError('A cold-food complaint did not contain temperature evidence. The result was not counted.')
+    if review.sentiment == 'positive' and review.complaints:
+        raise llm.LocalModelError('A review classification contradicted its complaint evidence. The result was not counted.')
 
 
 def analyze(days=30, limit=24):
@@ -89,30 +148,20 @@ def analyze(days=30, limit=24):
             except ValueError:
                 pass
         pending.append((entry, digest))
-    # Small local models are more reliable when reviews cannot contaminate each other.
-    for offset in range(0, len(pending)):
-        chunk = pending[offset:offset + 1]
-        data = {entry['id']: (entry, digest) for entry, digest in chunk}
+    # Small local models are more reliable when reviews cannot contaminate each other: one review per call.
+    for entry, digest in pending:
         try:
-            result = llm.generate(prompts.REVIEW_CLASSIFICATION, {'reviews': [{'id': e['id'], 'text': e['text']} for e, _ in chunk]}, Batch)
-            if len(result.reviews) != len(data) or {r.id for r in result.reviews} != set(data):
-                raise llm.LocalModelError('Review IDs did not match the requested sample.')
-            for review in result.reviews:
-                entry, digest = data[review.id]
-                if any(complaint.quote.casefold() not in entry['text'].casefold() for complaint in review.complaints):
-                    raise llm.LocalModelError('The model returned a complaint without a matching evidence quote.')
-                if any(complaint.topic == 'cold_food' and not re.search(r'cold|cool|lukewarm|room.temperature|not (?:hot|warm)|froid|ti[eè]de|pas chaud', complaint.quote, re.I) for complaint in review.complaints):
-                    raise llm.LocalModelError('A cold-food complaint did not contain temperature evidence. The result was not counted.')
-                if review.sentiment == 'positive' and review.complaints:
-                    raise llm.LocalModelError('A review classification contradicted its complaint evidence. The result was not counted.')
+            review = classify(entry['id'], entry['text'])
+            validate(review, entry['text'])
             with get_connection() as c:
-                for review in result.reviews:
-                    entry, digest = data[review.id]
-                    c.execute('INSERT OR REPLACE INTO ai_review_analysis (review_id,content_hash,model_key,payload) VALUES (?,?,?,?)', (review.id, digest, model_key, review.model_dump_json()))
-                    analyzed.append((entry, review))
-        except llm.LocalModelError as exc:
+                c.execute('INSERT OR REPLACE INTO ai_review_analysis (review_id,content_hash,model_key,payload) VALUES (?,?,?,?)', (review.id, digest, model_key, review.model_dump_json()))
+            analyzed.append((entry, review))
+        except llm.ModelUnavailable as exc:
             failures.append(str(exc))
             break
+        except llm.LocalModelError as exc:
+            # One unusable answer only skips that review; the rest are still analyzed.
+            failures.append(f"Review {entry['id']} skipped: {exc}")
     sentiments = Counter(r.sentiment for _, r in analyzed)
     topics = Counter(topic for _, review in analyzed for topic in {c.topic for c in review.complaints})
     examples = []

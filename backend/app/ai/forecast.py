@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from app.database import get_connection
 
 LAGS = (168, 336, 504)
+RF_PARAMS = {'n_estimators': 80, 'max_depth': 10, 'min_samples_leaf': 3, 'random_state': 42, 'n_jobs': 1}
 
 
 def features(at, values):
@@ -21,6 +22,24 @@ def seasonal(at, values):
     return mean(values.get(at - timedelta(hours=lag), 0) for lag in LAGS)
 
 
+def hourly_history(c, today):
+    """Hourly order counts (cancelled orders excluded) from the first complete day up to today, exclusive.
+
+    Shared with evaluation/backtest_forecast.py so the backtest sees exactly what the app sees."""
+    start_window = today - timedelta(days=120)
+    orders = c.execute("SELECT created_at FROM orders WHERE status!='cancelled' AND created_at>=? AND created_at<? ORDER BY created_at", (str(start_window), str(today))).fetchall()
+    if not orders:
+        raise HTTPException(422, 'At least 35 completed calendar days of order history are required.')
+    first = datetime.fromisoformat(orders[0]['created_at']).replace(hour=0, minute=0, second=0, microsecond=0)
+    # Skip the first recorded day, whose observation period may be incomplete.
+    start = first + timedelta(days=1)
+    if (today - start).days < 35:
+        raise HTTPException(422, 'At least 35 completed calendar days of order history are required.')
+    counts = Counter(datetime.fromisoformat(r['created_at']).replace(minute=0, second=0, microsecond=0) for r in orders)
+    hours = [start + timedelta(hours=i) for i in range(int((today - start).total_seconds() / 3600))]
+    return start, hours, {at: counts[at] for at in hours}
+
+
 def forecast(days=7, now=None):
     try:
         from sklearn.ensemble import RandomForestRegressor
@@ -28,24 +47,13 @@ def forecast(days=7, now=None):
         raise HTTPException(503, 'Install the backend requirements to enable scikit-learn forecasting.') from exc
     now = now or datetime.now()
     today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    start_window = today - timedelta(days=120)
     with get_connection() as c:
-        orders = c.execute("SELECT created_at FROM orders WHERE status!='cancelled' AND created_at>=? AND created_at<? ORDER BY created_at", (str(start_window), str(today))).fetchall()
-        if not orders:
-            raise HTTPException(422, 'At least 35 completed calendar days of order history are required.')
-        first = datetime.fromisoformat(orders[0]['created_at']).replace(hour=0, minute=0, second=0, microsecond=0)
-        # Skip the first recorded day, whose observation period may be incomplete.
-        start = first + timedelta(days=1)
-        if (today - start).days < 35:
-            raise HTTPException(422, 'At least 35 completed calendar days of order history are required.')
-        counts = Counter(datetime.fromisoformat(r['created_at']).replace(minute=0, second=0, microsecond=0) for r in orders)
-        hours = [start + timedelta(hours=i) for i in range(int((today - start).total_seconds() / 3600))]
-        observed = {at: counts[at] for at in hours}
+        start, hours, observed = hourly_history(c, today)
         training = hours[504:]
         split = today - timedelta(days=7)
         train_hours = [at for at in training if at < split]
         test_hours = [at for at in training if at >= split]
-        model = RandomForestRegressor(n_estimators=80, max_depth=10, min_samples_leaf=3, random_state=42, n_jobs=1)
+        model = RandomForestRegressor(**RF_PARAMS)
         model.fit([features(at, observed) for at in train_hours], [observed[at] for at in train_hours])
         # Only observations before the holdout are visible. Weekly lags remain past-only.
         held_values = {at: value for at, value in observed.items() if at < split}
