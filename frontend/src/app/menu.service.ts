@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-export interface Dish {id: number; name: string; description: string | null; price: number; category: string; is_available: boolean; preparation_minutes: number; is_vegetarian: boolean; image_url: string | null;}
-export type DishInput = Omit<Dish, 'id'>;
+export interface Dish {id: number; name: string; description: string | null; price: number; category: string; is_available: boolean; preparation_minutes: number; is_vegetarian: boolean; image_url: string | null; allergens?: string[];}
+// Allergens are derived from recipes on the server and are never sent back.
+export type DishInput = Omit<Dish, 'id' | 'allergens'>;
 
 @Injectable({providedIn: 'root'})
 export class MenuService {

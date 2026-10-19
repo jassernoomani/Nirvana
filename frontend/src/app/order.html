@@ -1,5 +1,5 @@
 <div class="page">
-  <header class="page-header"><a class="page-brand" routerLink="/" aria-label="Restauration home"><span>r.</span>restauration<em>●</em></a><a class="page-link" routerLink="/orders">My orders</a></header>
+  <customer-nav />
   <main class="page-main">
     @if (order(); as order) {
       @if (justPlaced) {

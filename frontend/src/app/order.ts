@@ -1,4 +1,5 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { CustomerNavComponent } from './customer-nav';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -6,7 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.service';
 
-@Component({selector: 'order-detail', standalone: true, imports: [DatePipe, DecimalPipe, FormsModule, RouterLink], templateUrl: './order.html', styleUrl: './pages.css'})
+@Component({selector: 'order-detail', standalone: true, imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, CustomerNavComponent], templateUrl: './order.html', styleUrl: './pages.css'})
 export class OrderComponent {
   private destroy = inject(DestroyRef);
   private orders = inject(OrderService);

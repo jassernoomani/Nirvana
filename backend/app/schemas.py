@@ -19,6 +19,8 @@ class MenuItemCreate(BaseModel):
 
 class MenuItem(MenuItemCreate):
     id: int
+    # Read-only: derived from the recipe's ingredients.
+    allergens: list[str] = []
 
 
 class MenuItemPatch(BaseModel):

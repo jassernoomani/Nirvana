@@ -1,4 +1,5 @@
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { CustomerNavComponent } from './customer-nav';
 import { DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
@@ -7,7 +8,7 @@ import { CartService, MAX_PER_DISH } from './cart.service';
 import { MenuService } from './menu.service';
 import { errorMessage, newIdempotencyKey, OrderService } from './order.service';
 
-@Component({selector: 'order-checkout', standalone: true, imports: [DecimalPipe, RouterLink], templateUrl: './checkout.html', styleUrl: './pages.css'})
+@Component({selector: 'order-checkout', standalone: true, imports: [DecimalPipe, RouterLink, CustomerNavComponent], templateUrl: './checkout.html', styleUrl: './pages.css'})
 export class CheckoutComponent {
   cart = inject(CartService);
   private orders = inject(OrderService);

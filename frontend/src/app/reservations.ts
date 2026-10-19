@@ -1,8 +1,8 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { CustomerNavComponent } from './customer-nav';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, switchMap, catchError, of } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -15,7 +15,7 @@ function isoDay(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-@Component({selector: 'reservation-page', standalone: true, imports: [DatePipe, FormsModule, RouterLink], templateUrl: './reservations.html', styleUrls: ['./pages.css', './reservations.css']})
+@Component({selector: 'reservation-page', standalone: true, imports: [DatePipe, FormsModule, CustomerNavComponent], templateUrl: './reservations.html', styleUrls: ['./pages.css', './reservations.css']})
 export class ReservationsComponent {
   private api = inject(ReservationService);
   private destroy = inject(DestroyRef);

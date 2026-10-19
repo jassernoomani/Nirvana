@@ -10,9 +10,11 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private destroy = inject(DestroyRef);
-  private query = inject(ActivatedRoute).snapshot.queryParamMap;
+  private route = inject(ActivatedRoute);
+  // Read on use: Angular reuses this page when only the query string changes.
+  private get query() {return this.route.snapshot.queryParamMap;}
   mode = signal<'login' | 'register'>('login');
-  expired = this.query.get('expired') === '1';
+  get expired() {return this.query.get('expired') === '1';}
   fullName = ''; email = ''; password = '';
   busy = signal(false);
   error = signal('');

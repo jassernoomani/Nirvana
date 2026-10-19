@@ -90,6 +90,8 @@ Stock is tracked per ingredient, because dishes are made from recipes. Stock can
 
 Menu routes (reading is public; creating, changing and deleting require staff):
 
+Every dish returned by the menu routes includes `allergens`, derived from its recipe's ingredients (read-only).
+
 - `GET /api/menu`: returns a list. Supports `category`, `available`, `search`, `min_price`, `max_price`, `vegetarian`, `sort` (name, price, category, id), `direction` (asc, desc), `limit` (1–100, default 100), and `offset`.
 - `GET /api/menu/page?page=1&page_size=20`: returns items, total, page, and page_size for the complete menu.
 - `GET /api/menu/categories`: lists current categories.

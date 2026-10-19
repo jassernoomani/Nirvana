@@ -1,14 +1,14 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { CustomerNavComponent } from './customer-nav';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { AiService, Picks, Preferences } from './ai.service';
 import { CartService } from './cart.service';
 import { Dish } from './menu.service';
 
-@Component({standalone: true, imports: [CommonModule, FormsModule, RouterLink], templateUrl: './recommendations.html', styleUrl: './intelligence.css'})
+@Component({standalone: true, imports: [CommonModule, FormsModule, CustomerNavComponent], templateUrl: './recommendations.html', styleUrl: './intelligence.css'})
 export class RecommendationsComponent {
   private ai = inject(AiService); private destroy = inject(DestroyRef); cart = inject(CartService);
   profile = signal<Preferences | null>(null); picks = signal<Picks | null>(null);

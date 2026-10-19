@@ -1,13 +1,16 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from './auth.service';
+import { StaffNavComponent } from './staff-nav';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AiService, Forecast, ModelStatus, ReviewReport } from './ai.service';
 
-@Component({standalone: true, imports: [CommonModule, FormsModule, RouterLink], templateUrl: './intelligence.html', styleUrl: './intelligence.css'})
+@Component({standalone: true, imports: [CommonModule, FormsModule, RouterLink, StaffNavComponent], templateUrl: './intelligence.html', styleUrl: './intelligence.css'})
 export class IntelligenceComponent {
   private ai = inject(AiService); private destroy = inject(DestroyRef);
+  auth = inject(AuthService); private router = inject(Router);
   tab = signal('forecast'); model = signal<ModelStatus | null>(null); forecast = signal<Forecast | null>(null);
   reviews = signal<ReviewReport | null>(null); prompts = signal<Record<string, string> | null>(null);
   forecastBusy = signal(false); reviewBusy = signal(false); error = signal('');
@@ -16,6 +19,7 @@ export class IntelligenceComponent {
   peak = computed(() => Math.max(1, ...this.hourly().map(row => row.orders)));
   purchases = computed(() => this.forecast()?.ingredients.filter(item => item.suggested_purchase > 0).length ?? 0);
   constructor() {this.checkModel(); this.runForecast();}
+  signOut() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/login']), error: () => this.router.navigate(['/login'])});}
   label(value: string) {return value.replaceAll('_', ' ');}
   checkModel() {this.ai.status().pipe(takeUntilDestroyed(this.destroy)).subscribe({next: s => this.model.set(s), error: () => this.error.set('Could not check the local model connection.')});}
   runForecast() {

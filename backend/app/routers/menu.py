@@ -19,6 +19,24 @@ def row_to_menu_item(row: sqlite3.Row) -> dict:
     return item
 
 
+def with_allergens(items: list[dict]) -> list[dict]:
+    """Add each dish's allergens, derived from the ingredients in its recipe."""
+    if not items:
+        return items
+    marks = ", ".join("?" * len(items))
+    found: dict[int, list[str]] = {}
+    with get_connection() as connection:
+        for row in connection.execute(
+                f"""SELECT DISTINCT di.menu_item_id, a.name FROM dish_ingredients di
+                    JOIN ingredient_allergens ia ON ia.ingredient_id = di.ingredient_id
+                    JOIN allergens a ON a.id = ia.allergen_id
+                    WHERE di.menu_item_id IN ({marks}) ORDER BY a.name""", tuple(item["id"] for item in items)):
+            found.setdefault(row["menu_item_id"], []).append(row["name"])
+    for item in items:
+        item["allergens"] = found.get(item["id"], [])
+    return items
+
+
 @router.get("", response_model=list[MenuItem])
 def list_menu_items(
     category: str | None = None,
@@ -63,7 +81,7 @@ def list_menu_items(
     with get_connection() as connection:
         rows = connection.execute(query, parameters).fetchall()
 
-    return [row_to_menu_item(row) for row in rows]
+    return with_allergens([row_to_menu_item(row) for row in rows])
 
 
 @router.get("/page", response_model=MenuPage)
@@ -71,7 +89,7 @@ def menu_page(page: int = Query(default=1, ge=1), page_size: int = Query(default
     with get_connection() as connection:
         total = connection.execute("SELECT COUNT(*) FROM menu_items").fetchone()[0]
         rows = connection.execute("SELECT * FROM menu_items ORDER BY category, name, id LIMIT ? OFFSET ?", (page_size, (page - 1) * page_size)).fetchall()
-    return {"items": [row_to_menu_item(row) for row in rows], "total": total, "page": page, "page_size": page_size}
+    return {"items": with_allergens([row_to_menu_item(row) for row in rows]), "total": total, "page": page, "page_size": page_size}
 
 
 @router.get("/categories", response_model=list[str])
@@ -91,7 +109,7 @@ def get_menu_item(item_id: int):
     if row is None:
         raise HTTPException(status_code=404, detail="Menu item not found")
 
-    return row_to_menu_item(row)
+    return with_allergens([row_to_menu_item(row)])[0]
 
 
 @router.post(
@@ -123,7 +141,7 @@ def create_menu_item(item: MenuItemCreate):
             (cursor.lastrowid,),
         ).fetchone()
 
-    return row_to_menu_item(row)
+    return with_allergens([row_to_menu_item(row)])[0]
 
 
 @router.put("/{item_id}", response_model=MenuItem, dependencies=STAFF_ONLY)
@@ -156,7 +174,7 @@ def update_menu_item(item_id: int, item: MenuItemCreate):
             (item_id,),
         ).fetchone()
 
-    return row_to_menu_item(row)
+    return with_allergens([row_to_menu_item(row)])[0]
 
 
 @router.patch("/{item_id}", response_model=MenuItem, dependencies=STAFF_ONLY)
@@ -170,7 +188,7 @@ def patch_menu_item(item_id: int, item: MenuItemPatch):
         assignments = ", ".join(f"{field} = ?" for field in changes)
         connection.execute(f"UPDATE menu_items SET {assignments} WHERE id = ?", [*changes.values(), item_id])
         row = connection.execute("SELECT * FROM menu_items WHERE id = ?", (item_id,)).fetchone()
-    return row_to_menu_item(row)
+    return with_allergens([row_to_menu_item(row)])[0]
 
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=STAFF_ONLY)

@@ -114,6 +114,13 @@ class SeededDatabaseTests(unittest.TestCase):
             finally:
                 database.DATABASE_PATH = original
 
+    def test_menu_shows_allergens_from_recipes(self):
+        with TestClient(app) as client:
+            menu = {dish["name"]: dish["allergens"] for dish in client.get("/api/menu").json()}
+            self.assertEqual(menu["Crispy Calamari"], ["Gluten", "Molluscs"])
+            self.assertEqual(menu["Orange Juice"], [])
+            self.assertEqual(client.get("/api/menu/23").json()["allergens"], ["Dairy", "Eggs", "Gluten", "Nuts"])
+
     def test_dish_with_order_history_cannot_be_deleted(self):
         with TestClient(app) as client:
             client.post("/api/auth/login", json={"email": "manager@nirvana.test", "password": seed_data.DEMO_PASSWORD})

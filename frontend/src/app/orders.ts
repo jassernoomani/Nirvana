@@ -1,13 +1,14 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { CustomerNavComponent } from './customer-nav';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.service';
 
-@Component({selector: 'order-list', standalone: true, imports: [DatePipe, DecimalPipe, RouterLink], styleUrl: './pages.css', template: `
+@Component({selector: 'order-list', standalone: true, imports: [DatePipe, DecimalPipe, RouterLink, CustomerNavComponent], styleUrl: './pages.css', template: `
 <div class="page">
-  <header class="page-header"><a class="page-brand" routerLink="/" aria-label="Restauration home"><span>r.</span>restauration<em>●</em></a><a class="page-link" routerLink="/">← Back to the menu</a></header>
+  <customer-nav />
   <main class="page-main">
     <div class="eyebrow">YOUR ACCOUNT</div>
     <h1>My orders.</h1>
