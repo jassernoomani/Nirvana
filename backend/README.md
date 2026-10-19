@@ -66,6 +66,13 @@ Booking rules and assumptions. The project did not define these, so they follow 
 - Times are the restaurant's local time, the same as the server's clock.
 - Contact details are the account's name and email, plus an optional phone number stored with the reservation.
 
+Kitchen routes (all staff only):
+
+- `GET /api/kitchen/orders`: open orders (`pending`, shown as New, then `preparing` and `ready`), oldest first, with items, customer name, and the longest preparation time among the items.
+- `POST /api/kitchen/orders/{id}/status`: moves an order one step with `from_status` and `to_status`. Allowed steps: `pending → preparing → ready → served`; serving removes the order from the board. The change only applies if the order is still in `from_status`, so two screens cannot advance the same order twice (409). Every change is recorded in `order_status_history` with the staff member and time.
+
+The project has no real-time channel, so the dashboard refreshes every 15 seconds while it is visible, and immediately after each change.
+
 Inventory routes (all staff only):
 
 - `GET /api/inventory`: every ingredient with its unit, stock, minimum level (`reorder_level`), status (`ok`, `low` below the minimum, `out` at zero) and the dishes that use it.
@@ -102,6 +109,7 @@ Startup performs an additive, repeatable SQLite migration that also creates the 
 | `user_allergies`, `user_favorite_categories` | Customer dietary profile used by recommendations |
 | `orders`, `order_items` | Orders with status (pending, preparing, ready, served, cancelled) and the price paid per item |
 | `reviews` | Rating (1–5) and comment, optionally linked to an order |
+| `order_status_history` | Every kitchen status change: from, to, staff member, time |
 | `stock_movements` | Every stock change: quantity, reason, note, staff member or order, time |
 | `restaurant_tables`, `reservations` | Tables with seat counts and bookings |
 

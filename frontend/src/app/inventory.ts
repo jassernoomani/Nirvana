@@ -7,13 +7,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { DialogFocusDirective } from './dialog-focus';
+import { StaffNavComponent } from './staff-nav';
 import { errorMessage } from './order.service';
 import { AdjustReason, InventoryItem, InventoryService, MOVEMENT_LABELS, StockMovement } from './inventory.service';
 
 type Mode = 'delivery' | 'adjust' | 'edit' | 'history';
 type Direction = 'waste' | 'remove' | 'add';
 
-@Component({selector: 'staff-inventory', standalone: true, imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, DialogFocusDirective], templateUrl: './inventory.html', styleUrl: './inventory.css'})
+@Component({selector: 'staff-inventory', standalone: true, imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, DialogFocusDirective, StaffNavComponent], templateUrl: './inventory.html', styleUrl: './inventory.css'})
 export class InventoryComponent {
   private api = inject(InventoryService);
   private destroy = inject(DestroyRef);

@@ -8,6 +8,7 @@ Local intelligence modules are now available: customer recommendations at `/reco
 - Checkout: customers confirm their cart to place an order, then see the confirmation and their order history.
 - Reservations: customers book a table for a date, time and party size, see their reservations and cancel upcoming ones.
 - Staff dashboard: create and edit dishes, manage availability, and delete dishes.
+- Kitchen dashboard (staff): open orders in New, Preparing and Ready columns, advanced with one click.
 - Inventory (staff): ingredient stock with low-stock warnings, deliveries, adjustments, stock counts and a history of every change.
 - Accounts: sign-up for customers, sign-in and sign-out, with customer and staff roles enforced by the API.
 - Includes 27 sample dishes across 7 categories, each with a local illustration, a recipe and allergens.
@@ -38,6 +39,7 @@ npm.cmd start
 - Customer menu: http://localhost:4200
 - Sign in or create an account: http://localhost:4200/login
 - Staff dashboard (staff accounts only): http://localhost:4200/admin
+- Kitchen dashboard (staff accounts only): http://localhost:4200/admin/kitchen
 - Inventory (staff accounts only): http://localhost:4200/admin/inventory
 - API documentation: http://localhost:8000/docs
 

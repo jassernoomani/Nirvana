@@ -1,6 +1,6 @@
 <div class="shell">
   <aside class="sidebar"><a class="brand" routerLink="/" aria-label="Restauration home"><span class="brand-icon">r.</span>restauration<span class="brand-dot">●</span></a><div class="workspace">RESTAURANT WORKSPACE</div>
-    <nav class="side-nav" aria-label="Staff workspace"><a class="nav-link" routerLink="/admin"><span>▦</span> Menu studio</a><a class="nav-active" routerLink="/admin/inventory" aria-current="page"><span>▤</span> Inventory <span class="nav-dot"></span></a></nav>
+    <staff-nav />
   </aside>
   <main>
     <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Inventory</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="signOut()">Sign out</button></span></header>

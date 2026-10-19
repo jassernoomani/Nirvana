@@ -137,6 +137,17 @@ SCHEMA = [
     )
     """,
     "CREATE INDEX IF NOT EXISTS idx_stock_movements_ingredient ON stock_movements(ingredient_id, created_at)",
+    """
+    CREATE TABLE IF NOT EXISTS order_status_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+        from_status TEXT NOT NULL,
+        to_status TEXT NOT NULL,
+        staff_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        changed_at TEXT NOT NULL
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_order_status_history_order ON order_status_history(order_id, changed_at)",
     "CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)",
     "CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at)",
     "CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)",

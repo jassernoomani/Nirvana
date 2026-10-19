@@ -186,3 +186,25 @@ class StockMovement(BaseModel):
     staff_name: str | None
     order_reference: str | None
     created_at: str
+
+
+KitchenStatus = Literal["pending", "preparing", "ready", "served"]
+
+
+class StatusChange(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    # The status the screen showed; the change is refused if the order has moved on since.
+    from_status: KitchenStatus
+    to_status: KitchenStatus
+
+
+class KitchenOrder(BaseModel):
+    id: int
+    reference: str
+    status: str
+    created_at: str
+    status_since: str
+    customer_name: str | None
+    item_count: int
+    longest_preparation_minutes: int
+    items: list[OrderLine]
