@@ -37,6 +37,9 @@ def load_orders(connection: sqlite3.Connection, where: str, parameters: tuple, l
         by_id[row["order_id"]]["items"].append({
             "menu_item_id": row["menu_item_id"], "name": row["name"], "quantity": row["quantity"],
             "unit_price": row["unit_price"], "line_total": round(row["unit_price"] * row["quantity"], 2)})
+    for row in connection.execute(
+            f"SELECT order_id, rating, comment, created_at FROM reviews WHERE order_id IN ({marks})", tuple(by_id)):
+        by_id[row["order_id"]]["review"] = {"rating": row["rating"], "comment": row["comment"], "created_at": row["created_at"]}
     return list(by_id.values())
 
 

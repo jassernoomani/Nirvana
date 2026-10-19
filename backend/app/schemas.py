@@ -94,6 +94,12 @@ class OrderLine(BaseModel):
     line_total: float
 
 
+class OrderReview(BaseModel):
+    rating: int
+    comment: str | None
+    created_at: str
+
+
 class Order(BaseModel):
     id: int
     reference: str
@@ -101,6 +107,8 @@ class Order(BaseModel):
     total: float
     created_at: str
     items: list[OrderLine]
+    # The customer's own review of this order, if they wrote one.
+    review: OrderReview | None = None
 
 
 class ReservationRequest(BaseModel):
@@ -208,3 +216,36 @@ class KitchenOrder(BaseModel):
     item_count: int
     longest_preparation_minutes: int
     items: list[OrderLine]
+
+
+class ReviewRequest(BaseModel):
+    # No author or order fields: the author is the signed-in customer and the
+    # order comes from the URL, so nobody can post as someone else.
+    model_config = ConfigDict(extra="forbid")
+    rating: int = Field(ge=1, le=5)
+    comment: str = Field(max_length=1000)
+
+    @field_validator("comment", mode="before")
+    @classmethod
+    def trim(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+    @field_validator("comment")
+    @classmethod
+    def long_enough(cls, value):
+        if len(value) < 3:
+            raise ValueError("Please write a short comment (at least 3 characters)")
+        return value
+
+
+class PublicReview(BaseModel):
+    rating: int
+    comment: str
+    author: str
+    created_at: str
+
+
+class ReviewSummary(BaseModel):
+    average_rating: float | None
+    review_count: int
+    reviews: list[PublicReview]

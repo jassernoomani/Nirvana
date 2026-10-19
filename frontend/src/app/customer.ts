@@ -7,6 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Dish, MenuService } from './menu.service';
 import { AuthService } from './auth.service';
 import { CartService } from './cart.service';
+import { OrderService, ReviewSummary } from './order.service';
 import { DialogFocusDirective } from './dialog-focus';
 
 
@@ -36,7 +37,14 @@ export class CustomerComponent {
   cartCount = this.cartService.count;
   total = this.cartService.total;
 
-  constructor() {this.load(); this.auth.ready();}
+  guestReviews = signal<ReviewSummary | null>(null);
+  readonly stars = [1, 2, 3, 4, 5];
+
+  constructor() {
+    this.load(); this.auth.ready();
+    inject(OrderService).publicReviews().pipe(takeUntilDestroyed(this.destroy)).subscribe({next: summary => this.guestReviews.set(summary), error: () => {}});
+  }
+  reviewDate(value: string) {return value.replace(' ', 'T');}
   firstName(fullName: string) {return fullName.split(' ')[0];}
   signOut() {this.auth.logout().subscribe({next: () => this.notice.set('You have been signed out.'), error: () => {}});}
   load() {

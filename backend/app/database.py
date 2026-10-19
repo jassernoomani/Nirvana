@@ -210,6 +210,13 @@ def initialize_database() -> None:
         connection.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_reference ON orders(reference)")
         connection.execute(
             "CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_idempotency ON orders(user_id, idempotency_key)")
+        try:
+            # One review per order. Skipped on an old database that already holds
+            # duplicates; the review route enforces the rule in that case too.
+            connection.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_order ON reviews(order_id) WHERE order_id IS NOT NULL")
+        except sqlite3.IntegrityError:
+            pass
         reservation_columns = {row["name"] for row in connection.execute("PRAGMA table_info(reservations)")}
         if "contact_phone" not in reservation_columns:
             connection.execute("ALTER TABLE reservations ADD COLUMN contact_phone TEXT")

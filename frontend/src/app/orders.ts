@@ -17,10 +17,10 @@ import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.servic
       } @else {
         <section class="page-card">
           <table class="order-table">
-            <thead><tr><th>Reference</th><th>Placed</th><th>Status</th><th class="num">Items</th><th class="num">Total</th></tr></thead>
+            <thead><tr><th>Reference</th><th>Placed</th><th>Status</th><th class="num">Items</th><th class="num">Total</th><th>Review</th></tr></thead>
             <tbody>
               @for (order of orders; track order.id) {
-                <tr><td data-label="Reference"><a [routerLink]="['/orders', order.reference]">{{ order.reference }}</a></td><td data-label="Placed">{{ date(order.created_at) | date:'d MMM y, HH:mm' }}</td><td data-label="Status"><span class="status" [attr.data-status]="order.status">{{ labels[order.status] ?? order.status }}</span></td><td class="num" data-label="Items">{{ count(order) }}</td><td class="num" data-label="Total">{{ order.total | number:'1.2-2' }}</td></tr>
+                <tr><td data-label="Reference"><a [routerLink]="['/orders', order.reference]">{{ order.reference }}</a></td><td data-label="Placed">{{ date(order.created_at) | date:'d MMM y, HH:mm' }}</td><td data-label="Status"><span class="status" [attr.data-status]="order.status">{{ labels[order.status] ?? order.status }}</span></td><td class="num" data-label="Items">{{ count(order) }}</td><td class="num" data-label="Total">{{ order.total | number:'1.2-2' }}</td><td data-label="Review">@if (order.review; as review) {<span class="stars-inline" [attr.aria-label]="review.rating + ' out of 5 stars'">{{ starText(review.rating) }}</span>} @else if (order.status === 'served') {<a [routerLink]="['/orders', order.reference]">Rate it</a>} @else {<span class="muted">—</span>}</td></tr>
               }
             </tbody>
           </table>
@@ -43,6 +43,7 @@ export class OrdersComponent {
       next: orders => this.orders.set(orders), error: (err: HttpErrorResponse) => this.error.set(errorMessage(err))
     });
   }
+  starText(rating: number) {return '★'.repeat(rating);}
   count(order: Order) {return order.items.reduce((n, item) => n + item.quantity, 0);}
   date(value: string) {return value.replace(' ', 'T');}
 }

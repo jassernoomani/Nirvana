@@ -24,6 +24,32 @@
         </table>
         <div class="page-actions"><a class="page-secondary" routerLink="/orders">All my orders</a><a class="page-primary" routerLink="/">Back to the menu</a></div>
       </section>
+      <section class="page-card review-card" aria-labelledby="review-title">
+        <h2 id="review-title">{{ order.review ? 'Your review' : 'Rate this order' }}</h2>
+        @if (order.review; as review) {
+          @if (reviewSent()) {<div class="page-success" role="status"><strong>Thank you for your review!</strong> It helps our kitchen improve.</div>}
+          <p class="stars-static" [attr.aria-label]="review.rating + ' out of 5 stars'">@for (n of stars; track n) {<span [class.on]="n <= review.rating">★</span>}</p>
+          <p class="review-text">{{ review.comment }}</p>
+          <small class="page-note">Posted {{ date(review.created_at) | date:'d MMM y, HH:mm' }}</small>
+        } @else if (order.status === 'served') {
+          <form (ngSubmit)="submitReview()" novalidate class="review-form">
+            <fieldset><legend>Your rating</legend>
+              <div class="star-input" role="radiogroup" aria-label="Rating">
+                @for (n of stars; track n) {<button type="button" role="radio" [attr.aria-checked]="rating === n" [attr.aria-label]="n + (n === 1 ? ' star' : ' stars')" [class.on]="n <= rating" (click)="rating = n">★</button>}
+                <span class="rating-label">{{ rating ? rating + ' / 5' : 'Choose a rating' }}</span>
+              </div>
+            </fieldset>
+            <label>Your comment<textarea name="comment" [(ngModel)]="comment" rows="4" maxlength="1000" placeholder="What did you enjoy? What could we do better?"></textarea></label>
+            <small class="page-note">Your review is shown with your first name only. Please don't include phone numbers or emails.</small>
+            @if (reviewError()) {<div class="page-error" role="alert">{{ reviewError() }}</div>}
+            <div class="page-actions"><button class="page-primary" type="submit" [disabled]="sending()">{{ sending() ? 'Sending…' : 'Submit review' }}</button></div>
+          </form>
+        } @else if (order.status === 'cancelled') {
+          <p class="page-note">Cancelled orders cannot be reviewed.</p>
+        } @else {
+          <p class="page-note">You can rate this order once it has been served.</p>
+        }
+      </section>
     } @else if (error()) {
       <section class="page-card page-empty" role="alert"><h2>Order unavailable.</h2><p>{{ error() }}</p><a class="page-primary" routerLink="/orders">See my orders</a></section>
     } @else {

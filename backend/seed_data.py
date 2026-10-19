@@ -342,10 +342,13 @@ def build(connection: sqlite3.Connection, days: int = 90, rng_seed: int = 2026, 
                 if rng.random() < 0.14:
                     review_rows.append(make_review(rng, order_id, customer["id"], completed, lines, dishes,
                                                    peak=day.weekday() in (4, 5) and 19 <= hour <= 21, recent=recent,
-                                                   dinner=hour >= 19))
+                                                   dinner=hour >= 19, now=now))
 
-    for (rating, comment), (order_id, user_id, completed) in zip(SPECIAL_REVIEWS, reviewable[-40::13]):
-        review_rows.append((user_id, order_id, rating, comment, fmt(completed + timedelta(hours=3))))
+    # One review per order: the edge cases go on recent orders that have none yet.
+    reviewed = {row[1] for row in review_rows}
+    unreviewed = [entry for entry in reviewable if entry[0] not in reviewed][-30:]
+    for (rating, comment), (order_id, user_id, completed) in zip(SPECIAL_REVIEWS, unreviewed[::10]):
+        review_rows.append((user_id, order_id, rating, comment, fmt(min(completed + timedelta(hours=3), now))))
     review_rows.sort(key=lambda row: row[4])
     connection.executemany(
         "INSERT INTO reviews (user_id, order_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)", review_rows)
@@ -398,7 +401,7 @@ def build(connection: sqlite3.Connection, days: int = 90, rng_seed: int = 2026, 
             "orders": order_count + 5, "reviews": len(review_rows), "reservations": len(reservation_rows)}
 
 
-def make_review(rng, order_id, user_id, completed, lines, dishes, peak, recent, dinner):
+def make_review(rng, order_id, user_id, completed, lines, dishes, peak, recent, dinner, now):
     names = [dishes[d]["name"] for d in lines if dishes[d]["category"] != "Drinks"] or [dishes[d]["name"] for d in lines]
     hot_dishes = [dishes[d]["name"] for d in lines if dishes[d]["category"] in ("Mains", "Pasta", "Pizza")]
     issues = []
@@ -429,7 +432,8 @@ def make_review(rng, order_id, user_id, completed, lines, dishes, peak, recent, 
     comment = " ".join(parts)
     if rng.random() < 0.08:
         comment = None
-    created = completed + timedelta(hours=rng.randint(1, 30))
+    # Reviews come in up to a day after the meal, but never in the future.
+    created = min(completed + timedelta(hours=rng.randint(1, 30)), now)
     return (user_id, order_id, rating, comment, fmt(created))
 
 

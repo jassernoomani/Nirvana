@@ -3,7 +3,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CartLine } from './cart.service';
 
 export interface OrderLine {menu_item_id: number; name: string; quantity: number; unit_price: number; line_total: number;}
-export interface Order {id: number; reference: string; status: string; total: number; created_at: string; items: OrderLine[];}
+export interface OrderReview {rating: number; comment: string | null; created_at: string;}
+export interface Order {id: number; reference: string; status: string; total: number; created_at: string; items: OrderLine[]; review: OrderReview | null;}
+export interface PublicReview {rating: number; comment: string; author: string; created_at: string;}
+export interface ReviewSummary {average_rating: number | null; review_count: number; reviews: PublicReview[];}
 
 export const STATUS_LABELS: Partial<Record<string, string>> = {
   pending: 'Received', preparing: 'Being prepared', ready: 'Ready', served: 'Served', cancelled: 'Cancelled'
@@ -20,6 +23,11 @@ export class OrderService {
   }
   mine() {return this.http.get<Order[]>('/api/orders');}
   get(reference: string) {return this.http.get<Order>(`/api/orders/${encodeURIComponent(reference)}`);}
+  /** The author is taken from the session on the server; only the rating and comment are sent. */
+  review(reference: string, rating: number, comment: string) {
+    return this.http.post<Order>(`/api/orders/${encodeURIComponent(reference)}/review`, {rating, comment});
+  }
+  publicReviews(limit = 6) {return this.http.get<ReviewSummary>('/api/reviews', {params: {limit}});}
 }
 
 export function newIdempotencyKey(): string {

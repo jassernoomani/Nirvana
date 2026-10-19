@@ -42,6 +42,12 @@ Checkout rules, enforced on the server:
 - The order, its items and the stock deductions are written in one transaction, which takes the database write lock first (`BEGIN IMMEDIATE`), so concurrent checkouts cannot oversell.
 - New orders start with status `pending` (shown as "Received") and get a public reference such as `NV-8E77RR3D`.
 
+Review routes:
+
+- `POST /api/orders/{reference}/review` (customers only): `rating` (1–5) and `comment` (3–1000 characters). Only the order's own customer can review it (another customer's order returns 404), only once it is `served` (409 otherwise), and only once (409; also enforced by a unique index on `reviews.order_id`). The author is the signed-in user; requests naming an author or order in the body are rejected (422).
+- `GET /api/reviews` (public): average rating, review count and the latest written reviews. Only the author's first name is shown, phone numbers, emails and links in comments are removed, and comments that look like instructions to an AI are not shown.
+- `GET /api/orders/...` now includes the customer's own `review` of each order.
+
 Reservation routes:
 
 - `GET /api/reservations/availability?date=YYYY-MM-DD&party_size=N` (public): each seating time of that day and whether a table is free.

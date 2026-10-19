@@ -6,6 +6,7 @@ Local intelligence modules are now available: customer recommendations at `/reco
 
 - Customer menu: browse dishes, filter categories, view details, and build a cart.
 - Checkout: customers confirm their cart to place an order, then see the confirmation and their order history.
+- Reviews: customers rate and comment on their served orders; the menu page shows recent guest reviews.
 - Reservations: customers book a table for a date, time and party size, see their reservations and cancel upcoming ones.
 - Staff dashboard: create and edit dishes, manage availability, and delete dishes.
 - Kitchen dashboard (staff): open orders in New, Preparing and Ready columns, advanced with one click.
