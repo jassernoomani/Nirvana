@@ -1,0 +1,21 @@
+:host{display:block}
+.auth-page{min-height:100vh;background:#faf9f4;color:#293c2c;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px}
+.auth-brand{align-self:flex-start;display:flex;align-items:center;gap:9px;font-size:23px;font-weight:800;color:#29462f;text-decoration:none;letter-spacing:-1px;margin:0 0 56px 24px}
+.auth-brand>span{background:#2f5136;color:#fff;width:34px;height:34px;display:grid;place-items:center;border-radius:9px;font:28px Georgia}
+.auth-brand em{font-size:8px;font-style:normal;color:#b9cd7f}
+.auth-card{width:100%;max-width:420px;background:#fff;border:1px solid #e6e6da;border-radius:16px;padding:36px 34px;box-shadow:0 12px 30px #23472c0d}
+.eyebrow{font-size:9px;letter-spacing:1.6px;color:#8c9c7d;font-weight:600}
+h1{font-size:26px;letter-spacing:-1px;font-weight:600;margin:12px 0 8px}
+.auth-lead{font-size:13px;line-height:1.7;color:#87917a;margin:0 0 22px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#f2f4ec;border-radius:9px;padding:4px;margin-bottom:22px}
+.auth-tabs button{border:0;background:transparent;border-radius:7px;padding:9px;font-size:12px;font-weight:600;color:#718167}
+.auth-tabs button.selected{background:#fff;color:#2e5137;box-shadow:0 1px 3px #23472c1a}
+form{display:flex;flex-direction:column;gap:14px}
+label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#475442}
+input{border:1px solid #dfe5d7;border-radius:8px;padding:11px 12px;font-size:14px;color:#293c2c;background:#fff}
+.auth-hint{font-size:11px;color:#929b90;margin-top:-8px}
+.auth-error{background:#fbeeea;color:#9a3b25;border-radius:8px;padding:10px 12px;font-size:12px}
+.auth-info{background:#edf3e8;color:#35573b;border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:16px}
+.auth-submit{margin-top:6px;background:#2e5137;color:#fff;border:0;border-radius:8px;padding:13px;font-size:13px;font-weight:600}
+.auth-back{display:block;text-align:center;margin-top:20px;font-size:12px;color:#667d55;text-decoration:none}
+@media(max-width:540px){.auth-brand{margin:0 0 32px 4px}.auth-card{padding:28px 20px}}

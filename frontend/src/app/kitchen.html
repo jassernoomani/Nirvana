@@ -1,0 +1,45 @@
+<div class="shell">
+  <aside class="sidebar"><a class="brand" routerLink="/" aria-label="Restauration home"><span class="brand-icon">r.</span>restauration<span class="brand-dot">●</span></a><div class="workspace">RESTAURANT WORKSPACE</div><staff-nav /></aside>
+  <main>
+    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Kitchen</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="auth.signOut('/login')">Sign out</button></span></header>
+    <section class="content kitchen">
+      <div class="kitchen-heading">
+        <h1>Kitchen orders</h1>
+        <div class="kitchen-refresh" role="status">
+          @if (updatedAt(); as at) {<span>Updated {{ at | date:'HH:mm:ss' }} · refreshes every 15 s</span>}
+          <button class="secondary" (click)="load()" [disabled]="loading()">↻ Refresh</button>
+        </div>
+      </div>
+      @if (error()) {<div class="error" role="alert">{{ error() }} <button aria-label="Dismiss error" (click)="error.set('')">×</button></div>}
+      @if (loading() && !updatedAt()) {
+        <p class="kitchen-loading" role="status">Loading orders…</p>
+      } @else {
+        <div class="board">
+          @for (column of columns; track column.status) {
+            <section class="column" [attr.data-status]="column.status" [attr.aria-labelledby]="'col-' + column.status">
+              <h2 [id]="'col-' + column.status">{{ column.title }} <span class="count">{{ byStatus()[column.status].length }}</span></h2>
+              @for (order of byStatus()[column.status]; track order.id) {
+                <article class="ticket" [class.late]="late(order)">
+                  <header>
+                    <strong class="ref">{{ order.reference }}</strong>
+                    <span class="age" [title]="'Placed at ' + (at(order.created_at) | date:'HH:mm')">{{ at(order.created_at) | date:'HH:mm' }} · {{ age(order) }} min</span>
+                  </header>
+                  <div class="meta"><span class="who">{{ order.customer_name ?? 'Guest order' }}</span><span class="pill">{{ column.title }}</span>@if (late(order)) {<span class="late-flag">Waiting long</span>}</div>
+                  <ul class="items">
+                    @for (item of order.items; track item.menu_item_id) {<li><b>{{ item.quantity }}×</b> {{ item.name }}</li>}
+                  </ul>
+                  <footer>
+                    <small>{{ order.item_count }} {{ order.item_count === 1 ? 'item' : 'items' }} · up to {{ order.longest_preparation_minutes }} min</small>
+                    <button class="primary advance" [disabled]="busy() !== null" (click)="advance(order, column)">{{ busy() === order.id ? 'Saving…' : column.action }}</button>
+                  </footer>
+                </article>
+              } @empty {
+                <p class="column-empty">{{ column.empty }}</p>
+              }
+            </section>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

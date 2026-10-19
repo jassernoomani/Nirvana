@@ -1,0 +1,86 @@
+<div class="shell">
+  <aside class="sidebar"><a class="brand" routerLink="/" aria-label="Restauration home"><span class="brand-icon">r.</span>restauration<span class="brand-dot">●</span></a><div class="workspace">RESTAURANT WORKSPACE</div>
+    <staff-nav />
+  </aside>
+  <main>
+    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Inventory</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="auth.signOut('/login')">Sign out</button></span></header>
+    <section class="content">
+      <div class="heading"><div><div class="eyebrow">STOCK ROOM</div><h1>Know what's on the shelves.</h1><p>Record deliveries, correct counts and catch low stock before service.</p></div><button class="secondary" (click)="load()" [disabled]="loading()">↻ Refresh</button></div>
+      <div class="overview inventory-overview">
+        <div><span class="metric-icon">▤</span><div><small>Ingredients tracked</small><strong>{{ loading() ? '—' : items().length }}</strong></div></div>
+        <div><span class="metric-icon orange">!</span><div><small>Low stock</small><strong>{{ loading() ? '—' : lowCount() }}</strong></div></div>
+        <div><span class="metric-icon red">○</span><div><small>Out of stock</small><strong>{{ loading() ? '—' : outCount() }}</strong></div></div>
+        <div class="overview-note"><span>✦</span><p>Orders deduct stock automatically.<br><button class="text-button attention-link" (click)="showAttention()" [disabled]="!lowCount() && !outCount()">Show items that need attention →</button></p></div>
+      </div>
+      <div class="inventory-filters">
+        <label class="search"><span>⌕</span><input [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Search by ingredient, dish or ID…" aria-label="Search inventory"></label>
+        <select [ngModel]="status()" (ngModelChange)="status.set($event)" aria-label="Stock status"><option value="">All stock levels</option><option value="attention">Needs attention</option><option value="low">Low stock</option><option value="out">Out of stock</option><option value="ok">In stock</option></select>
+        <button class="text-button" (click)="search.set(''); status.set('')">Reset</button>
+      </div>
+      @if (notice()) {<div class="notice" role="status">✓ {{ notice() }} <button aria-label="Dismiss notification" (click)="notice.set('')">×</button></div>}
+      @if (error()) {<div class="error" role="alert">{{ error() }} <button class="secondary" (click)="load()">Retry</button></div>}
+      @if (loading()) {<p class="inventory-empty" role="status">Loading stock…</p>}
+      @else if (!filtered().length && !error()) {<p class="inventory-empty">No ingredients match these filters.</p>}
+      @else if (filtered().length) {
+        <div class="table-wrap">
+          <table class="inventory-table">
+            <thead><tr><th>ID</th><th>Ingredient</th><th class="num">In stock</th><th class="num">Minimum</th><th>Status</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+            <tbody>
+              @for (item of filtered(); track item.id) {
+                <tr [class.row-low]="item.status === 'low'" [class.row-out]="item.status === 'out'">
+                  <td class="muted" data-label="ID">#{{ item.id }}</td>
+                  <td data-label="Ingredient"><strong>{{ item.name }}</strong><small>{{ item.used_in.length ? 'Used in ' + item.used_in.join(', ') : 'Not used in any dish' }}</small></td>
+                  <td class="num" data-label="In stock"><strong>{{ item.stock_quantity | number:'1.0-2' }}</strong> {{ item.unit }}</td>
+                  <td class="num muted" data-label="Minimum">{{ item.reorder_level | number:'1.0-2' }} {{ item.unit }}</td>
+                  <td data-label="Status"><span class="stock-badge" [attr.data-status]="item.status">{{ item.status === 'ok' ? '' : '⚠ ' }}{{ statusLabels[item.status] }}</span></td>
+                  <td class="actions"><button class="secondary" (click)="open(item, 'delivery')">Receive</button><button class="text-button" (click)="open(item, 'adjust')">Adjust</button><button class="text-button" (click)="open(item, 'edit')">Edit</button><button class="text-button" (click)="open(item, 'history')">History</button></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="inventory-count">{{ filtered().length }} of {{ items().length }} ingredients</p>
+      }
+    </section>
+  </main>
+</div>
+@if (selected(); as item) {
+  <div class="modal-backdrop" (keydown.escape)="close()">
+    <section class="modal" dialogFocus role="dialog" aria-modal="true" aria-labelledby="stock-title">
+      <div class="modal-heading"><div><div class="eyebrow">{{ item.name }} · {{ item.stock_quantity | number:'1.0-2' }} {{ item.unit }} in stock</div>
+        <h2 id="stock-title">{{ mode() === 'delivery' ? 'Receive a delivery' : mode() === 'adjust' ? 'Adjust stock' : mode() === 'edit' ? 'Edit stock count' : 'Stock history' }}</h2></div>
+        <button class="close" (click)="close()" [disabled]="saving()" aria-label="Close">×</button></div>
+      @if (mode() === 'history') {
+        @if (history() === null) {<p class="inventory-empty" role="status">Loading history…</p>}
+        @else if (!history()!.length && !formError()) {<p class="inventory-empty">No stock changes recorded yet.</p>}
+        @else {
+          <ul class="history">
+            @for (m of history(); track m.id) {
+              <li><span class="change" [class.negative]="m.change < 0">{{ m.change > 0 ? '+' : '' }}{{ m.change | number:'1.0-2' }} {{ item.unit }}</span>
+                <div><strong>{{ movementLabels[m.reason] ?? m.reason }}</strong>@if (m.order_reference) { · {{ m.order_reference }}}@if (m.note) {<em> — {{ m.note }}</em>}<small>{{ when(m.created_at) | date:'d MMM y, HH:mm' }} · {{ m.staff_name ?? (m.order_reference ? 'Automatic' : 'Unknown') }} · {{ m.quantity_after | number:'1.0-2' }} {{ item.unit }} after</small></div></li>
+            }
+          </ul>
+        }
+        @if (formError()) {<div class="error" role="alert">{{ formError() }}</div>}
+        <div class="modal-actions"><button class="secondary" (click)="close()">Close</button></div>
+      } @else {
+        <form (ngSubmit)="save()" novalidate>
+          @if (mode() === 'adjust') {
+            <label>Type of change<select name="direction" [(ngModel)]="direction"><option value="waste">Remove: waste or spoilage</option><option value="remove">Remove: correction</option><option value="add">Add: correction</option></select></label>
+          }
+          @if (mode() === 'edit') {
+            <div class="form-row">
+              <label>Counted quantity ({{ item.unit }})<input type="number" name="quantity" [(ngModel)]="quantity" min="0" step="any" required></label>
+              <label>Minimum level ({{ item.unit }})<input type="number" name="minimum" [(ngModel)]="minimum" min="0" step="any" required></label>
+            </div>
+          } @else {
+            <label>Quantity ({{ item.unit }})<input type="number" name="quantity" [(ngModel)]="quantity" min="0" step="any" required placeholder="e.g. 500"></label>
+          }
+          <label>Note <small>(optional)</small><input name="note" [(ngModel)]="note" maxlength="200" [placeholder]="mode() === 'delivery' ? 'Supplier or delivery number' : 'Reason for the change'"></label>
+          @if (formError()) {<div class="error" role="alert">{{ formError() }}</div>}
+          <div class="modal-actions"><button type="button" class="secondary" (click)="close()" [disabled]="saving()">Cancel</button><button type="submit" class="primary" [disabled]="saving()">{{ saving() ? 'Saving…' : mode() === 'delivery' ? 'Add to stock' : 'Save' }}</button></div>
+        </form>
+      }
+    </section>
+  </div>
+}

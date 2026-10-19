@@ -1,0 +1,31 @@
+:host{display:block}
+.kitchen{max-width:none}
+.kitchen-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.kitchen-heading h1{margin:0;font-size:28px;letter-spacing:-1px}
+.kitchen-refresh{display:flex;align-items:center;gap:12px;font-size:12px;color:#8d9783}
+.kitchen-loading{font-size:14px;color:#8d9783}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+.column{background:#f1f4ec;border-radius:14px;padding:14px;min-height:260px}
+.column h2{display:flex;align-items:center;justify-content:space-between;font-size:16px;margin:2px 4px 14px;text-transform:uppercase;letter-spacing:1px}
+.count{background:#fff;border-radius:999px;min-width:30px;text-align:center;padding:3px 10px;font-size:14px}
+.column[data-status="pending"] h2{color:#8a5a12}
+.column[data-status="preparing"] h2{color:#27507a}
+.column[data-status="ready"] h2{color:#35573b}
+.ticket{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:12px;border-left:5px solid #d9c38f;box-shadow:0 2px 6px #23472c0f}
+.column[data-status="preparing"] .ticket{border-left-color:#8fb3d9}
+.column[data-status="ready"] .ticket{border-left-color:#8fbd9d}
+.ticket.late{border-left-color:#c8543d;background:#fffaf8}
+.ticket header{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.ref{font-size:18px;letter-spacing:.5px}
+.age{font-size:13px;color:#6b7a66;white-space:nowrap}
+.meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 10px;font-size:13px}
+.who{color:#475442;font-weight:600}
+.pill{font-size:11px;border-radius:999px;padding:2px 8px;background:#f2f4ec;color:#546348}
+.late-flag{font-size:11px;font-weight:700;color:#a34e40;background:#fae9e6;border-radius:999px;padding:2px 8px}
+.items{list-style:none;margin:0;padding:0;font-size:16px;line-height:1.7}
+.items b{display:inline-block;min-width:30px}
+.ticket footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid #f0f2ec}
+.ticket footer small{color:#8d9783;font-size:12px}
+.advance{font-size:14px;padding:11px 16px}
+.column-empty{color:#8d9783;font-size:13px;text-align:center;padding:30px 10px}
+@media(max-width:1100px){.board{grid-template-columns:1fr}.column{min-height:0}}
