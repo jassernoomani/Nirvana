@@ -6,9 +6,9 @@ Chaque membre du groupe décrit ici sa propre utilisation de l'IA générative. 
 |---|---|
 | Jasser Noomani | [documentation-individuelle-jasser-noomani.md](documentation-individuelle-jasser-noomani.md) |
 | Manef Akrimi | *à ajouter* |
-| [Membre 3] | *à ajouter* |
-| [Membre 4] | *à ajouter* |
-| [Membre 5] | *à ajouter* |
+| Yasmin Ouerteteni | *à ajouter* |
+| Ayoub Belgacem | *à ajouter* |
+| Skander Ferjani | *à ajouter* |
 
 ## Plan conseillé pour chaque fichier
 
