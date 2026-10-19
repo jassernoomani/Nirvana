@@ -1,4 +1,5 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { serverTime } from './server-time';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -6,7 +7,7 @@ import { forkJoin } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import { Dish, MenuService } from './menu.service';
 import { AuthService } from './auth.service';
-import { CartService } from './cart.service';
+import { CartService, removedNotice } from './cart.service';
 import { OrderService, ReviewSummary } from './order.service';
 import { DialogFocusDirective } from './dialog-focus';
 
@@ -44,9 +45,9 @@ export class CustomerComponent {
     this.load(); this.auth.ready();
     inject(OrderService).publicReviews().pipe(takeUntilDestroyed(this.destroy)).subscribe({next: summary => this.guestReviews.set(summary), error: () => {}});
   }
-  reviewDate(value: string) {return value.replace(' ', 'T');}
+  reviewDate(value: string) {return serverTime(value);}
   firstName(fullName: string) {return fullName.split(' ')[0];}
-  signOut() {this.auth.logout().subscribe({next: () => this.notice.set('You have been signed out.'), error: () => {}});}
+  signOut() {this.auth.signOut().then(() => this.notice.set('You have been signed out.'));}
   load() {
     this.loading.set(true); this.error.set('');
     // The API list is capped at 100; use the count endpoint to retrieve every page.
@@ -58,7 +59,8 @@ export class CustomerComponent {
   }
   private loaded(items: Dish[]) {
     this.dishes.set(items); this.loading.set(false); this.page.set(1);
-    this.cartService.sync(items);
+    const removed = removedNotice(this.cartService.sync(items));
+    if (removed) this.notice.set(removed);
   }
   private failed() {this.loading.set(false); this.error.set('Our menu is temporarily unavailable. Please try again in a moment.');}
   filter() {this.page.set(1);}

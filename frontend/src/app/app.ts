@@ -1,4 +1,5 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { errorMessage } from './errors';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -7,14 +8,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Dish, DishInput, MenuService } from './menu.service';
 import { DialogFocusDirective } from './dialog-focus';
 import { StaffNavComponent } from './staff-nav';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Component({selector: 'app-root', standalone: true, imports: [CommonModule, FormsModule, DialogFocusDirective, RouterLink, StaffNavComponent], templateUrl: './app.html'})
 export class AppComponent {
   private api = inject(MenuService);
   private destroy = inject(DestroyRef);
-  private router = inject(Router);
   auth = inject(AuthService);
   private requests = new Subject<Record<string, string | number | boolean>>();
   dishes = signal<Dish[]>([]);
@@ -35,7 +35,7 @@ export class AppComponent {
 
   constructor() {
     this.requests.pipe(switchMap(filters => this.api.list(filters).pipe(catchError((err: HttpErrorResponse) => {
-      this.error.set(this.message(err)); return of([] as Dish[]);
+      this.error.set(errorMessage(err)); return of([] as Dish[]);
     }))), takeUntilDestroyed(this.destroy)).subscribe(items => { this.dishes.set(items); this.loading.set(false); });
     this.loadCategories(); this.load();
   }
@@ -61,24 +61,16 @@ export class AppComponent {
     const body = {...this.form, name: this.form.name.trim(), category: this.form.category.trim(), description: this.form.description?.trim() || null};
     if (!body.name || !body.category || !(body.price > 0) || !Number.isInteger(body.preparation_minutes) || body.preparation_minutes < 1 || body.preparation_minutes > 240) {this.formError.set('Enter a name, category, positive price, and preparation time from 1 to 240 minutes.'); return;}
     this.saving.set(true); this.formError.set('');
-    (this.editId === null ? this.api.create(body) : this.api.update(this.editId, body)).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.saving.set(false); this.editor.set(false); this.notice.set('Dish saved successfully.'); this.loadCategories(); this.load(true);}, error: err => {this.saving.set(false); this.formError.set(this.message(err));}});
+    (this.editId === null ? this.api.create(body) : this.api.update(this.editId, body)).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.saving.set(false); this.editor.set(false); this.notice.set('Dish saved successfully.'); this.loadCategories(); this.load(true);}, error: err => {this.saving.set(false); this.formError.set(errorMessage(err));}});
   }
   toggle(dish: Dish) {
     if (this.pending() !== null) return;
     this.pending.set(dish.id); this.error.set('');
-    this.api.availability(dish.id, !dish.is_available).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.pending.set(null); this.notice.set('Availability updated.'); this.load();}, error: err => {this.pending.set(null); this.error.set(this.message(err));}});
+    this.api.availability(dish.id, !dish.is_available).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.pending.set(null); this.notice.set('Availability updated.'); this.load();}, error: err => {this.pending.set(null); this.error.set(errorMessage(err));}});
   }
   confirmDelete() {
     const dish = this.deleting(); if (!dish || this.pending() !== null) return;
     this.pending.set(dish.id);
-    this.api.delete(dish.id).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.pending.set(null); this.deleting.set(null); this.notice.set('Dish deleted.'); this.loadCategories(); this.load(true);}, error: err => {this.pending.set(null); this.deleting.set(null); this.error.set(this.message(err));}});
-  }
-  signOut() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/login']), error: () => this.router.navigate(['/login'])});}
-  private message(err: HttpErrorResponse): string {
-    if (err.status === 0 || err.status === 502 || err.status === 504) return 'Cannot connect to the restaurant API. Start the backend on port 8000, then retry.';
-    const detail = err.error?.detail;
-    if (typeof detail === 'string') return detail;
-    if (Array.isArray(detail)) return detail.map((d: {msg: string}) => d.msg).join('. ');
-    return 'The request failed. Please try again.';
+    this.api.delete(dish.id).pipe(takeUntilDestroyed(this.destroy)).subscribe({next: () => {this.pending.set(null); this.deleting.set(null); this.notice.set('Dish deleted.'); this.loadCategories(); this.load(true);}, error: err => {this.pending.set(null); this.deleting.set(null); this.error.set(errorMessage(err));}});
   }
 }

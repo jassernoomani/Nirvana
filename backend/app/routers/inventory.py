@@ -1,15 +1,12 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException  # type: ignore
 
 from app.auth import require_staff
-from app.database import get_connection
+from app.database import get_connection, now_text
 from app.schemas import InventoryItem, StockAdjustment, StockMovement, StockUpdate
 
 # Every inventory route is staff-only.
 router = APIRouter(prefix="/api/inventory", tags=["Inventory"], dependencies=[Depends(require_staff)])
 
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 # Floating-point tolerance for quantities such as 0.25 of a lemon.
 EPSILON = 1e-9
 
@@ -44,7 +41,7 @@ def record(connection, ingredient_id: int, change: float, reason: str, note: str
         "INSERT INTO stock_movements (ingredient_id, change, quantity_after, reason, note, staff_id, order_id, created_at) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         (ingredient_id, tidy(change), tidy(max(after, 0)), reason, note, staff_id, order_id,
-         datetime.now().strftime(TIME_FORMAT)))
+         now_text()))
 
 
 def get_item(connection, ingredient_id: int) -> dict:

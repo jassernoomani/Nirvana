@@ -1,14 +1,15 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { serverTime } from './server-time';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { DialogFocusDirective } from './dialog-focus';
 import { StaffNavComponent } from './staff-nav';
-import { errorMessage } from './order.service';
+import { errorMessage } from './errors';
 import { AdjustReason, InventoryItem, InventoryService, MOVEMENT_LABELS, StockMovement } from './inventory.service';
 
 type Mode = 'delivery' | 'adjust' | 'edit' | 'history';
@@ -18,7 +19,6 @@ type Direction = 'waste' | 'remove' | 'add';
 export class InventoryComponent {
   private api = inject(InventoryService);
   private destroy = inject(DestroyRef);
-  private router = inject(Router);
   auth = inject(AuthService);
   readonly movementLabels = MOVEMENT_LABELS;
   readonly statusLabels = {ok: 'In stock', low: 'Low stock', out: 'Out of stock'};
@@ -95,6 +95,5 @@ export class InventoryComponent {
       error: (err: HttpErrorResponse) => {this.saving.set(false); this.formError.set(errorMessage(err));}
     });
   }
-  signOut() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/login']), error: () => this.router.navigate(['/login'])});}
-  when(value: string) {return value.replace(' ', 'T');}
+  when(value: string) {return serverTime(value);}
 }

@@ -1,15 +1,13 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException  # type: ignore
 
 from app.auth import require_staff
-from app.database import get_connection
+from app.database import get_connection, now_text
+from app.routers.orders import load_order_items, order_line
 from app.schemas import KitchenOrder, StatusChange
 
 # Every kitchen route is staff-only.
 router = APIRouter(prefix="/api/kitchen", tags=["Kitchen"], dependencies=[Depends(require_staff)])
 
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 # The kitchen workflow. "pending" is shown as New; serving an order removes it from the board.
 NEXT_STATUS = {"pending": "preparing", "preparing": "ready", "ready": "served"}
 ACTIVE = ("pending", "preparing", "ready")
@@ -26,14 +24,9 @@ def load(connection, where: str, parameters: tuple) -> list[dict]:
             WHERE {where} ORDER BY o.created_at, o.id""", parameters).fetchall()
     orders = {row["id"]: {**dict(row), "items": [], "item_count": 0, "longest_preparation_minutes": 0} for row in rows}
     if orders:
-        marks = ", ".join("?" * len(orders))
-        for item in connection.execute(
-                f"""SELECT oi.order_id, oi.menu_item_id, m.name, oi.quantity, oi.unit_price, m.preparation_minutes
-                    FROM order_items oi JOIN menu_items m ON m.id = oi.menu_item_id
-                    WHERE oi.order_id IN ({marks}) ORDER BY {COURSE_ORDER}, m.name""", tuple(orders)):
+        for item in load_order_items(connection, tuple(orders), order_by=f"{COURSE_ORDER}, m.name"):
             order = orders[item["order_id"]]
-            order["items"].append({"menu_item_id": item["menu_item_id"], "name": item["name"], "quantity": item["quantity"],
-                                   "unit_price": item["unit_price"], "line_total": round(item["unit_price"] * item["quantity"], 2)})
+            order["items"].append(order_line(item))
             order["item_count"] += item["quantity"]
             order["longest_preparation_minutes"] = max(order["longest_preparation_minutes"], item["preparation_minutes"])
     return list(orders.values())
@@ -50,7 +43,7 @@ def kitchen_orders():
 def change_status(order_id: int, body: StatusChange, staff: dict = Depends(require_staff)):
     if NEXT_STATUS.get(body.from_status) != body.to_status:
         raise HTTPException(422, f"An order cannot go from {body.from_status} to {body.to_status}")
-    now = datetime.now().strftime(TIME_FORMAT)
+    now = now_text()
     with get_connection() as connection:
         # Conditional on the status the screen showed: if two screens act on the
         # same order, only the first change applies.

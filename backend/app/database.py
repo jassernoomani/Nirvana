@@ -1,9 +1,17 @@
 import sqlite3
 from contextlib import contextmanager
 from collections.abc import Iterator
+from datetime import datetime
 from pathlib import Path
 
 DATABASE_PATH = Path(__file__).with_name("restaurant.db")
+# Every timestamp is stored as local server time in this format, which sorts
+# and compares correctly as text.
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+
+def now_text() -> str:
+    return datetime.now().strftime(TIME_FORMAT)
 
 # Tables added after the original menu table. Every statement is idempotent so
 # startup can run them against new and existing databases alike.

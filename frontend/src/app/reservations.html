@@ -53,7 +53,7 @@
         @if (past().length) {
           <h3 class="list-subtitle">Past</h3>
           @for (r of past(); track r.id) {
-            <article class="reservation past"><div><strong>{{ when(r.reserved_for) | date:'EEE d MMM y, HH:mm' }}</strong><small>{{ r.party_size }} {{ r.party_size === 1 ? 'guest' : 'guests' }}</small></div><span class="status" [attr.data-status]="r.status === 'no_show' ? 'cancelled' : r.status">{{ labels[r.status] ?? r.status }}</span></article>
+            <article class="reservation past"><div><strong>{{ when(r.reserved_for) | date:'EEE d MMM y, HH:mm' }}</strong><small>{{ r.party_size }} {{ r.party_size === 1 ? 'guest' : 'guests' }}</small></div><span class="status" [attr.data-status]="r.status === 'no_show' ? 'cancelled' : r.status">{{ r.status === 'booked' ? 'Past booking' : labels[r.status] ?? r.status }}</span></article>
           }
         }
       </section>

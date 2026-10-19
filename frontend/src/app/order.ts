@@ -1,11 +1,13 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { serverTime } from './server-time';
+import { errorMessage } from './errors';
 import { CustomerNavComponent } from './customer-nav';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.service';
+import { Order, OrderService, STATUS_LABELS } from './order.service';
 
 @Component({selector: 'order-detail', standalone: true, imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, CustomerNavComponent], templateUrl: './order.html', styleUrl: './pages.css'})
 export class OrderComponent {
@@ -39,5 +41,5 @@ export class OrderComponent {
     });
   }
   /** Stored as local restaurant time without a zone. */
-  date(value: string) {return value.replace(' ', 'T');}
+  date(value: string) {return serverTime(value);}
 }

@@ -1,10 +1,11 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { serverTime } from './server-time';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
 import { KitchenOrder, KitchenService, KitchenStatus } from './kitchen.service';
-import { errorMessage } from './order.service';
+import { errorMessage } from './errors';
 import { StaffNavComponent } from './staff-nav';
 
 // No real-time channel exists in the project, so the board polls. Orders change
@@ -16,7 +17,6 @@ interface Column {status: KitchenStatus; title: string; empty: string; action: s
 @Component({selector: 'staff-kitchen', standalone: true, imports: [DatePipe, RouterLink, StaffNavComponent], templateUrl: './kitchen.html', styleUrl: './kitchen.css'})
 export class KitchenComponent {
   private api = inject(KitchenService);
-  private router = inject(Router);
   auth = inject(AuthService);
   readonly columns: Column[] = [
     {status: 'pending', title: 'New', empty: 'No new orders. New orders appear here automatically.', action: 'Start preparing', next: 'preparing'},
@@ -29,6 +29,9 @@ export class KitchenComponent {
   updatedAt = signal<Date | null>(null);
   busy = signal<number | null>(null);
   now = signal(Date.now());
+  // Set when loading the board failed, so the next successful refresh clears that message
+  // (messages from a refused status change stay until dismissed).
+  private refreshFailed = false;
   byStatus = computed(() => {
     const groups: Record<string, KitchenOrder[]> = {pending: [], preparing: [], ready: []};
     // The server sends oldest first; keep that order inside each column.
@@ -47,8 +50,8 @@ export class KitchenComponent {
   load(background = false) {
     if (!background) this.loading.set(true);
     this.api.orders().subscribe({
-      next: orders => {this.orders.set(orders); this.loading.set(false); this.updatedAt.set(new Date()); this.now.set(Date.now()); if (!background) this.error.set('');},
-      error: (err: HttpErrorResponse) => {this.loading.set(false); this.error.set(errorMessage(err));}
+      next: orders => {this.orders.set(orders); this.loading.set(false); this.updatedAt.set(new Date()); this.now.set(Date.now()); if (!background || this.refreshFailed) this.error.set(''); this.refreshFailed = false;},
+      error: (err: HttpErrorResponse) => {this.loading.set(false); this.error.set(errorMessage(err)); this.refreshFailed = true;}
     });
   }
   advance(order: KitchenOrder, column: Column) {
@@ -67,6 +70,6 @@ export class KitchenComponent {
   age(order: KitchenOrder) {return Math.max(0, Math.floor((this.now() - this.time(order.created_at)) / 60000));}
   /** An order is late once it has waited longer than its slowest dish takes to prepare, plus a margin. */
   late(order: KitchenOrder) {return order.status !== 'ready' && this.age(order) > order.longest_preparation_minutes + 10;}
-  time(value: string) {return new Date(value.replace(' ', 'T')).getTime();}
-  signOut() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/login']), error: () => this.router.navigate(['/login'])});}
+  time(value: string) {return new Date(serverTime(value)).getTime();}
+  at(value: string) {return serverTime(value);}
 }

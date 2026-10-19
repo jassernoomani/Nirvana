@@ -1,4 +1,5 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { serverTime } from './server-time';
 import { CustomerNavComponent } from './customer-nav';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, switchMap, catchError, of } from 'rxjs';
 import { AuthService } from './auth.service';
-import { errorMessage } from './order.service';
+import { errorMessage } from './errors';
 import { Availability, Reservation, RESERVATION_LABELS, ReservationService } from './reservation.service';
 
 const MAX_DAYS_AHEAD = 60;
@@ -85,6 +86,6 @@ export class ReservationsComponent {
     });
   }
   /** Stored as local restaurant time without a zone. */
-  when(value: string) {return value.replace(' ', 'T');}
+  when(value: string) {return serverTime(value);}
   private isUpcoming(r: Reservation) {return new Date(this.when(r.reserved_for)) > new Date() && r.status !== 'completed';}
 }

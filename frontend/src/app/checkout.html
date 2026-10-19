@@ -3,6 +3,7 @@
   <main class="page-main">
     <div class="eyebrow">CHECKOUT</div>
     <h1>Review your order.</h1>
+    @if (notice()) {<div class="page-error" role="status">{{ notice() }}</div>}
     @if (!cart.lines().length) {
       <section class="page-card page-empty"><h2>Your cart is empty.</h2><p>Add a dish from the menu before checking out.</p><a class="page-primary" routerLink="/">Explore the menu</a></section>
     } @else {

@@ -5,6 +5,11 @@ export interface CartLine {dish: Dish; quantity: number;}
 const STORAGE_KEY = 'nirvana-cart';
 export const MAX_PER_DISH = 99;
 
+export function removedNotice(names: string[]) {
+  if (!names.length) return '';
+  return `${names.join(', ')} ${names.length === 1 ? 'is' : 'are'} no longer available and ${names.length === 1 ? 'was' : 'were'} removed from your cart.`;
+}
+
 // The cart is kept in this browser so it survives signing in and page reloads.
 // Prices here are for display only: the server recalculates every total.
 @Injectable({providedIn: 'root'})
@@ -28,9 +33,15 @@ export class CartService {
   decrease(id: number) {this.lines.update(lines => lines.flatMap(line => line.dish.id !== id ? [line] : line.quantity > 1 ? [{...line, quantity: line.quantity - 1}] : []));}
   remove(id: number) {this.lines.update(lines => lines.filter(line => line.dish.id !== id));}
   clear() {this.lines.set([]);}
-  /** Refresh names, prices and availability from the latest menu; drop dishes that are gone or unavailable. */
-  sync(menu: Dish[]) {
-    this.lines.update(lines => lines.flatMap(line => {const dish = menu.find(d => d.id === line.dish.id && d.is_available); return dish ? [{dish, quantity: line.quantity}] : [];}));
+  /** Refresh names, prices and availability from the latest menu; drop dishes that are gone or unavailable and return their names. */
+  sync(menu: Dish[]): string[] {
+    const removed: string[] = [];
+    this.lines.update(lines => lines.flatMap(line => {
+      const dish = menu.find(d => d.id === line.dish.id && d.is_available);
+      if (!dish) removed.push(line.dish.name);
+      return dish ? [{dish, quantity: line.quantity}] : [];
+    }));
+    return removed;
   }
   private restore(): CartLine[] {
     try {

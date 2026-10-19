@@ -1,17 +1,14 @@
 import sqlite3
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status  # type: ignore
 
 from app.ai.reviews import INJECTION, redact
 from app.auth import require_customer
-from app.database import get_connection
+from app.database import get_connection, now_text
 from app.routers.orders import load_orders
 from app.schemas import Order, ReviewRequest, ReviewSummary
 
 router = APIRouter(tags=["Reviews"])
-
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 @router.post("/api/orders/{reference}/review", response_model=Order, status_code=status.HTTP_201_CREATED)
@@ -31,7 +28,7 @@ def review_order(reference: str, body: ReviewRequest, user: dict = Depends(requi
         try:
             connection.execute(
                 "INSERT INTO reviews (user_id, order_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)",
-                (user["id"], order["id"], body.rating, body.comment, datetime.now().strftime(TIME_FORMAT)))
+                (user["id"], order["id"], body.rating, body.comment, now_text()))
         except sqlite3.IntegrityError:
             raise HTTPException(409, "You have already reviewed this order")
         return load_orders(connection, "id = ?", (order["id"],))[0]

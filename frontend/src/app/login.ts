@@ -1,4 +1,5 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { errorMessage } from './errors';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -32,7 +33,7 @@ export class LoginComponent {
     const request = this.mode() === 'login' ? this.auth.login(email, this.password) : this.auth.register(this.fullName.trim(), email, this.password);
     request.pipe(takeUntilDestroyed(this.destroy)).subscribe({
       next: user => {this.busy.set(false); this.router.navigateByUrl(this.destination(user));},
-      error: (err: HttpErrorResponse) => {this.busy.set(false); this.password = ''; this.error.set(this.message(err));}
+      error: (err: HttpErrorResponse) => {this.busy.set(false); this.password = ''; this.error.set(errorMessage(err));}
     });
   }
   /** Only same-site paths are followed, and customers are never sent to staff pages. */
@@ -41,12 +42,5 @@ export class LoginComponent {
     const safe = target.startsWith('/') && !target.startsWith('//') && !target.startsWith('/login');
     if (!safe || (user.role !== 'staff' && target.startsWith('/admin'))) return this.auth.home(user);
     return target;
-  }
-  private message(err: HttpErrorResponse) {
-    if (err.status === 0 || err.status === 502 || err.status === 504) return 'Cannot reach the restaurant server. Please try again in a moment.';
-    const detail = err.error?.detail;
-    if (typeof detail === 'string') return detail;
-    if (Array.isArray(detail)) return detail.map((d: {msg: string}) => d.msg).join('. ');
-    return 'Something went wrong. Please try again.';
   }
 }

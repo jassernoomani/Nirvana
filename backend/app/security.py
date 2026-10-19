@@ -2,7 +2,9 @@ import hashlib
 import hmac
 import secrets
 
-ITERATIONS = 200_000
+# OWASP recommendation for PBKDF2-HMAC-SHA256. Each stored hash records its own count,
+# so passwords hashed with an older value keep working.
+ITERATIONS = 600_000
 
 
 def hash_password(password: str) -> str:

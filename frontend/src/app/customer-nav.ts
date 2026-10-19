@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from './auth.service';
 import { CartService } from './cart.service';
 
@@ -20,7 +20,7 @@ import { CartService } from './cart.service';
     </nav>
     <div class="account">
       @if (auth.user(); as user) {
-        <span class="name">{{ user.full_name.split(' ')[0] }}</span><button type="button" (click)="signOut()">Sign out</button>
+        <span class="name">{{ user.full_name.split(' ')[0] }}</span><button type="button" (click)="auth.signOut('/')">Sign out</button>
       } @else {
         <a routerLink="/login">Sign in</a>
       }
@@ -47,7 +47,5 @@ import { CartService } from './cart.service';
 export class CustomerNavComponent {
   auth = inject(AuthService);
   cart = inject(CartService);
-  private router = inject(Router);
   constructor() {this.auth.ready();}
-  signOut() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/']), error: () => this.router.navigate(['/'])});}
 }

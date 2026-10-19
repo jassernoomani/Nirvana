@@ -142,6 +142,24 @@ class OrderTests(unittest.TestCase):
         order = self.client.get(f"/api/orders/{reference}").json()
         self.assertEqual((order["total"], order["items"][0]["unit_price"]), (10.0, 10.0))
 
+    def test_order_history_is_paged(self):
+        # Regression for the review finding: only the 50 newest orders were reachable.
+        with database.get_connection() as connection:
+            ana = connection.execute("SELECT id FROM users WHERE email = 'ana@example.com'").fetchone()[0]
+            for index in range(55):
+                connection.execute(
+                    "INSERT INTO orders (user_id, status, total, created_at, reference) VALUES (?, 'served', 3, ?, ?)",
+                    (ana, f"2026-09-{1 + index // 2:02d} 12:{index % 2:02d}:00", f"NV-PAGE{index:04d}"))
+        first = self.client.get("/api/orders", params={"limit": 20}).json()
+        rest = self.client.get("/api/orders", params={"limit": 50, "offset": 20}).json()
+        self.assertEqual((len(first), len(rest)), (20, 35))
+        references = [o["reference"] for o in first + rest]
+        self.assertEqual(len(set(references)), 55)
+        self.assertEqual(references[0], "NV-PAGE0054")
+        self.assertEqual(references[-1], "NV-PAGE0000")
+        for params in [{"limit": 0}, {"limit": 101}, {"offset": -1}]:
+            self.assertEqual(self.client.get("/api/orders", params=params).status_code, 422, params)
+
     def test_access_rules(self):
         reference = self.checkout([(TEA, 1)]).json()["reference"]
         self.assertEqual([o["reference"] for o in self.client.get("/api/orders").json()], [reference])

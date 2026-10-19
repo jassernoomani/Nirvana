@@ -19,7 +19,10 @@ class Preferences(BaseModel):
 
 @router.get('/status')
 def model_status(user=Depends(current_user)):
-    return llm.status()
+    result = llm.status()
+    if user['role'] != 'staff':
+        result['installed_models'] = []
+    return result
 
 
 @router.get('/profile')

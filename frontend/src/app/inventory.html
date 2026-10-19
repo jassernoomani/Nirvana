@@ -3,7 +3,7 @@
     <staff-nav />
   </aside>
   <main>
-    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Inventory</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="signOut()">Sign out</button></span></header>
+    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Inventory</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="auth.signOut('/login')">Sign out</button></span></header>
     <section class="content">
       <div class="heading"><div><div class="eyebrow">STOCK ROOM</div><h1>Know what's on the shelves.</h1><p>Record deliveries, correct counts and catch low stock before service.</p></div><button class="secondary" (click)="load()" [disabled]="loading()">↻ Refresh</button></div>
       <div class="overview inventory-overview">

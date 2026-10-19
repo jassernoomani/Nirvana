@@ -2,12 +2,11 @@ import math
 import secrets
 import sqlite3
 from collections import Counter, defaultdict
-from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status  # type: ignore
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status  # type: ignore
 
 from app.auth import current_user, require_customer
-from app.database import get_connection
+from app.database import get_connection, now_text
 from app.routers.inventory import record as record_movement
 from app.schemas import CheckoutRequest, Order
 
@@ -22,21 +21,30 @@ def make_reference(choice=secrets.choice) -> str:
     return "NV-" + "".join(choice(REFERENCE_ALPHABET) for _ in range(8))
 
 
-def load_orders(connection: sqlite3.Connection, where: str, parameters: tuple, limit: int = 1) -> list[dict]:
+def load_order_items(connection: sqlite3.Connection, order_ids: tuple, order_by: str = "m.name") -> list[sqlite3.Row]:
+    """Items of the given orders with their dish name and preparation time. order_by is internal SQL, never user input."""
+    marks = ", ".join("?" * len(order_ids))
+    return connection.execute(
+        f"""SELECT oi.order_id, oi.menu_item_id, m.name, oi.quantity, oi.unit_price, m.preparation_minutes
+            FROM order_items oi JOIN menu_items m ON m.id = oi.menu_item_id
+            WHERE oi.order_id IN ({marks}) ORDER BY {order_by}""", order_ids).fetchall()
+
+
+def order_line(row: sqlite3.Row) -> dict:
+    return {"menu_item_id": row["menu_item_id"], "name": row["name"], "quantity": row["quantity"],
+            "unit_price": row["unit_price"], "line_total": round(row["unit_price"] * row["quantity"], 2)}
+
+
+def load_orders(connection: sqlite3.Connection, where: str, parameters: tuple, limit: int = 1, offset: int = 0) -> list[dict]:
     orders = [dict(row) for row in connection.execute(
         f"SELECT id, reference, status, total, created_at FROM orders WHERE {where} "
-        "ORDER BY created_at DESC, id DESC LIMIT ?", (*parameters, limit))]
+        "ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?", (*parameters, limit, offset))]
     if not orders:
         return []
     by_id = {order["id"]: {**order, "items": []} for order in orders}
     marks = ", ".join("?" * len(by_id))
-    for row in connection.execute(
-            f"""SELECT oi.order_id, oi.menu_item_id, m.name, oi.quantity, oi.unit_price
-                FROM order_items oi JOIN menu_items m ON m.id = oi.menu_item_id
-                WHERE oi.order_id IN ({marks}) ORDER BY m.name""", tuple(by_id)):
-        by_id[row["order_id"]]["items"].append({
-            "menu_item_id": row["menu_item_id"], "name": row["name"], "quantity": row["quantity"],
-            "unit_price": row["unit_price"], "line_total": round(row["unit_price"] * row["quantity"], 2)})
+    for row in load_order_items(connection, tuple(by_id)):
+        by_id[row["order_id"]]["items"].append(order_line(row))
     for row in connection.execute(
             f"SELECT order_id, rating, comment, created_at FROM reviews WHERE order_id IN ({marks})", tuple(by_id)):
         by_id[row["order_id"]]["review"] = {"rating": row["rating"], "comment": row["comment"], "created_at": row["created_at"]}
@@ -105,7 +113,7 @@ def place_order(body: CheckoutRequest, response: Response, user: dict = Depends(
         order_id = connection.execute(
             "INSERT INTO orders (user_id, status, total, created_at, reference, idempotency_key) "
             "VALUES (?, 'pending', ?, ?, ?, ?)",
-            (user["id"], total, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), reference, body.idempotency_key)).lastrowid
+            (user["id"], total, now_text(), reference, body.idempotency_key)).lastrowid
         connection.executemany("INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price) VALUES (?, ?, ?, ?)",
                                [(order_id, d, q, dishes[d]["price"]) for d, q in quantities.items()])
         for ingredient, amount in required.items():
@@ -119,9 +127,11 @@ def place_order(body: CheckoutRequest, response: Response, user: dict = Depends(
 
 
 @router.get("", response_model=list[Order])
-def my_orders(user: dict = Depends(require_customer)):
+def my_orders(limit: int = Query(default=20, ge=1, le=100), offset: int = Query(default=0, ge=0),
+              user: dict = Depends(require_customer)):
+    """The customer's orders, newest first, one page at a time."""
     with get_connection() as connection:
-        return load_orders(connection, "user_id = ?", (user["id"],), limit=50)
+        return load_orders(connection, "user_id = ?", (user["id"],), limit=limit, offset=offset)
 
 
 @router.get("/{reference}", response_model=Order)

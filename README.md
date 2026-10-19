@@ -74,6 +74,8 @@ cd backend
 .\.venv\Scripts\python.exe -m unittest discover -p "test_*.py" -v
 ```
 
+To measure coverage, run `.\.venv\Scripts\python.exe -m pytest --cov=app --cov-report=term-missing` from `backend`. [AI_TESTING_AND_REVIEW.md](AI_TESTING_AND_REVIEW.md) describes the AI-assisted security and code review: findings, fixes and coverage before and after.
+
 From frontend, run `npm.cmd run build` for a production build.
 
 Online payment is not implemented: orders are placed without payment. The SQLite database is generated locally by the seed script; it and local environments are excluded from Git.

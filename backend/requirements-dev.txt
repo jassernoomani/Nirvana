@@ -1,2 +1,4 @@
 -r requirements.txt
 httpx2
+pytest>=8,<10
+pytest-cov>=5,<8

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Component({selector: 'auth-forbidden', standalone: true, imports: [RouterLink], styleUrl: './login.css', template: `
@@ -15,6 +15,5 @@ import { AuthService } from './auth.service';
   </div>`, styles: ['.auth-link{display:block;text-align:center;text-decoration:none}.auth-plain{border:0;background:none;width:100%;cursor:pointer}']})
 export class ForbiddenComponent {
   auth = inject(AuthService);
-  private router = inject(Router);
-  switchAccount() {this.auth.logout().subscribe({complete: () => this.router.navigate(['/login'], {queryParams: {returnUrl: '/admin'}}), error: () => this.router.navigate(['/login'])});}
+  switchAccount() {this.auth.signOut('/login', {queryParams: {returnUrl: '/admin'}});}
 }

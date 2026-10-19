@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, status  # type: ignore
 
 from app.auth import require_customer
-from app.database import get_connection
+from app.database import TIME_FORMAT, get_connection
 from app.schemas import Availability, Reservation, ReservationRequest
 
 router = APIRouter(prefix="/api/reservations", tags=["Reservations"])
@@ -21,7 +21,6 @@ MAX_DAYS_AHEAD = int(os.getenv("RESERVATION_MAX_DAYS_AHEAD", "60"))
 
 # Statuses that keep a table occupied. "booked" is shown to customers as Confirmed.
 ACTIVE = ("booked", "seated")
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def slot_times() -> list[str]:

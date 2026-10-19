@@ -6,11 +6,18 @@ from datetime import datetime, timedelta
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, StrictInt
 from app.ai import llm, prompts
-from app.database import get_connection
+from app.database import TIME_FORMAT, get_connection
 
 Topic = Literal['slow_service', 'cold_food', 'food_quality', 'price', 'noise', 'wrong_order', 'staff', 'other']
 Sentiment = Literal['positive', 'neutral', 'negative', 'mixed']
-INJECTION = re.compile(r'ignore\s+(all\s+|any\s+|previous\s+|prior\s+)*(instructions|rules)|system\s+prompt|<\|system|reveal.*prompt|ignore.*previous', re.I)
+INJECTION = re.compile(
+    r'(ignore|disregard|forget|override)\s+(all\s+|any\s+|the\s+|your\s+|previous\s+|prior\s+|above\s+)*(instructions|rules|prompt)'
+    r'|ignore.*previous|system\s+prompt|<\|system|reveal.*prompt'
+    r'|^\s*(system|assistant|developer)\s*:'
+    r'|\byou\s+are\s+now\s+(a|an|the)\b'
+    r'|ignor(e|ez|er)\s+(les|toutes\s+les|tes|vos)\s+(instructions|consignes|r[eè]gles)'
+    r'|(tu\s+es|vous\s+[eê]tes)\s+maintenant',
+    re.I | re.M)
 
 
 class Complaint(BaseModel):
@@ -55,8 +62,8 @@ def redact(text, names=()):
 
 def analyze(days=30, limit=24):
     now = datetime.now()
-    cutoff = (now - timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
-    end = now.strftime('%Y-%m-%d %H:%M:%S')
+    cutoff = (now - timedelta(days=days)).strftime(TIME_FORMAT)
+    end = now.strftime(TIME_FORMAT)
     with get_connection() as c:
         stats = c.execute('SELECT count(*) n,avg(rating) avg FROM reviews WHERE created_at>=? AND created_at<=?', (cutoff, end)).fetchone()
         rows = c.execute("SELECT id,rating,comment,created_at FROM reviews WHERE created_at>=? AND created_at<=? AND trim(coalesce(comment,''))!='' ORDER BY created_at DESC,id DESC LIMIT ?", (cutoff, end, limit)).fetchall()

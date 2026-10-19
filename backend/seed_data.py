@@ -24,7 +24,7 @@ from app.security import hash_password
 
 # Test value shared by every seeded account; see README "Demo accounts".
 DEMO_PASSWORD = "nirvana-demo"
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+TIME_FORMAT = database.TIME_FORMAT
 
 ALLERGENS = ["Gluten", "Dairy", "Eggs", "Fish", "Shellfish", "Molluscs", "Nuts", "Sesame", "Celery"]
 

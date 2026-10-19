@@ -12,13 +12,12 @@ from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException, Request, Response, status  # type: ignore
 
-from app.database import get_connection
+from app.database import TIME_FORMAT, get_connection
 
 SESSION_COOKIE = "nirvana_session"
 SESSION_HOURS = int(os.getenv("SESSION_HOURS", "8"))
 # Keep false for http://localhost; set COOKIE_SECURE=true when served over HTTPS.
 COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() == "true"
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def _hash(token: str) -> str:

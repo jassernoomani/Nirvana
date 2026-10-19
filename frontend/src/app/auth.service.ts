@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { catchError, finalize, firstValueFrom, of, tap } from 'rxjs';
 
@@ -9,6 +10,7 @@ export interface User {id: number; email: string; full_name: string; role: 'cust
 @Injectable({providedIn: 'root'})
 export class AuthService {
   private http = inject(HttpClient);
+  private router = inject(Router);
   readonly user = signal<User | null>(null);
   private session: Promise<User | null> | null = null;
 
@@ -26,6 +28,13 @@ export class AuthService {
   }
   logout() {
     return this.http.post<void>('/api/auth/logout', {}).pipe(finalize(() => this.signedIn(null)));
+  }
+  /** Ends the session, even if the server cannot be reached, then optionally opens another page. */
+  signOut(redirectTo?: string, extras?: NavigationExtras): Promise<void> {
+    return new Promise(resolve => {
+      const done = () => {if (redirectTo) this.router.navigate([redirectTo], extras); resolve();};
+      this.logout().subscribe({complete: done, error: done});
+    });
   }
   /** Called when the server rejects the session (expired or revoked). */
   expire() {this.signedIn(null);}

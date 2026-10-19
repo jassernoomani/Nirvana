@@ -1,7 +1,7 @@
 <div class="shell">
   <aside class="sidebar"><a class="brand" routerLink="/" aria-label="Restauration home"><span class="brand-icon">r.</span>restauration<span class="brand-dot">●</span></a><div class="workspace">RESTAURANT WORKSPACE</div><staff-nav /></aside>
   <main>
-    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Kitchen</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="signOut()">Sign out</button></span></header>
+    <header class="topbar"><span>Workspace <span class="slash">/</span> <strong>Kitchen</strong></span><span class="top-account"><span class="top-badge">{{ auth.user()?.full_name }}</span><button class="secondary" (click)="auth.signOut('/login')">Sign out</button></span></header>
     <section class="content kitchen">
       <div class="kitchen-heading">
         <h1>Kitchen orders</h1>
@@ -22,7 +22,7 @@
                 <article class="ticket" [class.late]="late(order)">
                   <header>
                     <strong class="ref">{{ order.reference }}</strong>
-                    <span class="age" [title]="'Placed at ' + (order.created_at.replace(' ', 'T') | date:'HH:mm')">{{ order.created_at.replace(' ', 'T') | date:'HH:mm' }} · {{ age(order) }} min</span>
+                    <span class="age" [title]="'Placed at ' + (at(order.created_at) | date:'HH:mm')">{{ at(order.created_at) | date:'HH:mm' }} · {{ age(order) }} min</span>
                   </header>
                   <div class="meta"><span class="who">{{ order.customer_name ?? 'Guest order' }}</span><span class="pill">{{ column.title }}</span>@if (late(order)) {<span class="late-flag">Waiting long</span>}</div>
                   <ul class="items">

@@ -1,10 +1,12 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { serverTime } from './server-time';
+import { errorMessage } from './errors';
 import { CustomerNavComponent } from './customer-nav';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.service';
+import { Order, ORDERS_PAGE_SIZE, OrderService, STATUS_LABELS } from './order.service';
 
 @Component({selector: 'order-list', standalone: true, imports: [DatePipe, DecimalPipe, RouterLink, CustomerNavComponent], styleUrl: './pages.css', template: `
 <div class="page">
@@ -25,6 +27,7 @@ import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.servic
               }
             </tbody>
           </table>
+          @if (hasMore()) {<div class="page-actions"><button class="page-secondary" type="button" [disabled]="loadingMore()" (click)="loadMore()">{{ loadingMore() ? 'Loading…' : 'Load older orders' }}</button></div>}
         </section>
       }
     } @else if (error()) {
@@ -37,14 +40,21 @@ import { errorMessage, Order, OrderService, STATUS_LABELS } from './order.servic
 export class OrdersComponent {
   private destroy = inject(DestroyRef);
   readonly labels = STATUS_LABELS;
+  private api = inject(OrderService);
   orders = signal<Order[] | null>(null);
   error = signal('');
-  constructor() {
-    inject(OrderService).mine().pipe(takeUntilDestroyed(this.destroy)).subscribe({
-      next: orders => this.orders.set(orders), error: (err: HttpErrorResponse) => this.error.set(errorMessage(err))
+  hasMore = signal(false);
+  loadingMore = signal(false);
+  constructor() {this.fetch();}
+  loadMore() {if (!this.loadingMore()) {this.loadingMore.set(true); this.fetch();}}
+  private fetch() {
+    const loaded = this.orders() ?? [];
+    this.api.mine(loaded.length).pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: page => {this.orders.set([...loaded, ...page]); this.hasMore.set(page.length === ORDERS_PAGE_SIZE); this.loadingMore.set(false);},
+      error: (err: HttpErrorResponse) => {this.loadingMore.set(false); this.error.set(errorMessage(err));}
     });
   }
   starText(rating: number) {return '★'.repeat(rating);}
   count(order: Order) {return order.items.reduce((n, item) => n + item.quantity, 0);}
-  date(value: string) {return value.replace(' ', 'T');}
+  date(value: string) {return serverTime(value);}
 }
