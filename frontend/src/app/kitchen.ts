@@ -14,24 +14,39 @@ const REFRESH_MS = 15000;
 
 interface Column {status: KitchenStatus; title: string; empty: string; action: string; next: string;}
 
-@Component({selector: 'staff-kitchen', standalone: true, imports: [DatePipe, RouterLink, StaffNavComponent], templateUrl: './kitchen.html', styleUrl: './kitchen.css'})
+@Component({
+  selector: 'staff-kitchen', 
+  standalone: true, 
+  imports: [DatePipe, RouterLink, StaffNavComponent], 
+  templateUrl: './kitchen.html', 
+  styleUrl: './kitchen.css'
+})
 export class KitchenComponent {
   private api = inject(KitchenService);
   auth = inject(AuthService);
+  
   readonly columns: Column[] = [
     {status: 'pending', title: 'New', empty: 'No new orders. New orders appear here automatically.', action: 'Start preparing', next: 'preparing'},
     {status: 'preparing', title: 'Preparing', empty: 'Nothing on the stove right now.', action: 'Mark ready', next: 'ready'},
     {status: 'ready', title: 'Ready', empty: 'No orders waiting to be served.', action: 'Served', next: 'served'},
   ];
+  
   orders = signal<KitchenOrder[]>([]);
   loading = signal(true);
   error = signal('');
   updatedAt = signal<Date | null>(null);
   busy = signal<number | null>(null);
   now = signal(Date.now());
+
+  // --- NEW AI STATE VARIABLES ---
+  aiEstimates = signal<Record<number, {minutes: number, reason: string, source: string}>>({});
+  aiLoading = signal<number | null>(null);
+  // ------------------------------
+
   // Set when loading the board failed, so the next successful refresh clears that message
   // (messages from a refused status change stay until dismissed).
   private refreshFailed = false;
+  
   byStatus = computed(() => {
     const groups: Record<string, KitchenOrder[]> = {pending: [], preparing: [], ready: []};
     // The server sends oldest first; keep that order inside each column.
@@ -47,13 +62,26 @@ export class KitchenComponent {
     }, REFRESH_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(timer));
   }
+
   load(background = false) {
     if (!background) this.loading.set(true);
     this.api.orders().subscribe({
-      next: orders => {this.orders.set(orders); this.loading.set(false); this.updatedAt.set(new Date()); this.now.set(Date.now()); if (!background || this.refreshFailed) this.error.set(''); this.refreshFailed = false;},
-      error: (err: HttpErrorResponse) => {this.loading.set(false); this.error.set(errorMessage(err)); this.refreshFailed = true;}
+      next: orders => {
+        this.orders.set(orders); 
+        this.loading.set(false); 
+        this.updatedAt.set(new Date()); 
+        this.now.set(Date.now()); 
+        if (!background || this.refreshFailed) this.error.set(''); 
+        this.refreshFailed = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading.set(false); 
+        this.error.set(errorMessage(err)); 
+        this.refreshFailed = true;
+      }
     });
   }
+
   advance(order: KitchenOrder, column: Column) {
     if (this.busy() !== null) return;
     this.busy.set(order.id); this.error.set('');
@@ -66,10 +94,33 @@ export class KitchenComponent {
       error: (err: HttpErrorResponse) => {this.busy.set(null); this.error.set(errorMessage(err)); this.load(true);}
     });
   }
+
   /** Minutes since the order was placed. */
   age(order: KitchenOrder) {return Math.max(0, Math.floor((this.now() - this.time(order.created_at)) / 60000));}
+  
   /** An order is late once it has waited longer than its slowest dish takes to prepare, plus a margin. */
   late(order: KitchenOrder) {return order.status !== 'ready' && this.age(order) > order.longest_preparation_minutes + 10;}
+  
   time(value: string) {return new Date(serverTime(value)).getTime();}
+  
   at(value: string) {return serverTime(value);}
+
+  // --- NEW AI METHOD ---
+  getAiEstimate(orderId: number) {
+    if (this.aiLoading() !== null) return; // Prevent multiple clicks at once
+    this.aiLoading.set(orderId);
+    
+    // We assume you will add this method to your KitchenService next!
+    this.api.getPrepTimeEstimate(orderId).subscribe({
+      next: (data) => {
+        this.aiEstimates.update(prev => ({...prev, [orderId]: data}));
+        this.aiLoading.set(null);
+      },
+      error: (err) => {
+        console.error("AI Error:", err);
+        this.aiLoading.set(null);
+        // Optional: show an alert or a toast notification here if it fails
+      }
+    });
+  }
 }
