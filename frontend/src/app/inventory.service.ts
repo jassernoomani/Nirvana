@@ -32,14 +32,6 @@ export const MOVEMENT_LABELS: Partial<Record<string, string>> = {
   order: 'Customer order'
 };
 
-// --- NEW INTERFACE FOR THE AI ---
-export interface PrepEstimate {
-  minutes: number;
-  reason: string;
-  source: 'ai' | 'fallback';
-}
-// -------------------------------
-
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   private http = inject(HttpClient);
@@ -59,10 +51,5 @@ export class InventoryService {
   
   history(id: number) { 
     return this.http.get<StockMovement[]>(`/api/inventory/${id}/movements`); 
-  }
-
-  // --- NEW AI KITCHEN METHOD ---
-  getPrepTimeEstimate(orderId: number) {
-    return this.http.post<PrepEstimate>(`/api/kitchen/estimate/${orderId}`, {});
   }
 }

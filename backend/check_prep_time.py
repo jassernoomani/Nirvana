@@ -1,4 +1,8 @@
-from app.prep_time import estimate_prep_time
+from dotenv import load_dotenv
+
+load_dotenv()  # the model settings in backend/.env
+
+from app.prep_time import estimate_prep_time  # noqa: E402
 
 menu = {
     "pizza": {"name": "Pizza", "prep_minutes": 15},

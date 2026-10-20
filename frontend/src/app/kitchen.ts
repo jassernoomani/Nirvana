@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
-import { KitchenOrder, KitchenService, KitchenStatus } from './kitchen.service';
+import { KitchenOrder, KitchenService, KitchenStatus, PrepEstimate } from './kitchen.service';
 import { errorMessage } from './errors';
 import { StaffNavComponent } from './staff-nav';
 
@@ -38,10 +38,9 @@ export class KitchenComponent {
   busy = signal<number | null>(null);
   now = signal(Date.now());
 
-  // --- NEW AI STATE VARIABLES ---
-  aiEstimates = signal<Record<number, {minutes: number, reason: string, source: string}>>({});
+  // AI preparation-time estimates, by order id.
+  aiEstimates = signal<Record<number, PrepEstimate>>({});
   aiLoading = signal<number | null>(null);
-  // ------------------------------
 
   // Set when loading the board failed, so the next successful refresh clears that message
   // (messages from a refused status change stay until dismissed).
@@ -105,21 +104,17 @@ export class KitchenComponent {
   
   at(value: string) {return serverTime(value);}
 
-  // --- NEW AI METHOD ---
   getAiEstimate(orderId: number) {
-    if (this.aiLoading() !== null) return; // Prevent multiple clicks at once
+    if (this.aiLoading() !== null) return; // one estimate at a time: the local model answers one request at once
     this.aiLoading.set(orderId);
-    
-    // We assume you will add this method to your KitchenService next!
     this.api.getPrepTimeEstimate(orderId).subscribe({
-      next: (data) => {
+      next: data => {
         this.aiEstimates.update(prev => ({...prev, [orderId]: data}));
         this.aiLoading.set(null);
       },
-      error: (err) => {
-        console.error("AI Error:", err);
+      error: (err: HttpErrorResponse) => {
         this.aiLoading.set(null);
-        // Optional: show an alert or a toast notification here if it fails
+        this.error.set(errorMessage(err, 'The time estimate could not be loaded.'));
       }
     });
   }

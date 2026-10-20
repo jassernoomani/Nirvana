@@ -68,4 +68,5 @@ def review_analysis(days: int = Query(default=30, ge=1, le=120), limit: int = Qu
 @router.get('/prompts')
 def exact_prompts(user=Depends(require_staff)):
     return {'version': prompts.PROMPT_VERSION, 'recommendations': prompts.RECOMMENDATIONS,
-            'review_classification': prompts.REVIEW_CLASSIFICATION, 'review_summary': prompts.REVIEW_SUMMARY}
+            'review_classification': prompts.REVIEW_CLASSIFICATION, 'review_summary': prompts.REVIEW_SUMMARY,
+            'prep_time': prompts.PREP_TIME}

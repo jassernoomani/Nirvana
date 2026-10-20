@@ -28,6 +28,15 @@
                   <ul class="items">
                     @for (item of order.items; track item.menu_item_id) {<li><b>{{ item.quantity }}×</b> {{ item.name }}</li>}
                   </ul>
+                  @if (column.status !== 'ready') {
+                    <div class="estimate">
+                      @if (aiEstimates()[order.id]; as estimate) {
+                        <span class="estimate-result" [title]="estimate.reason">≈ {{ estimate.minutes }} min · {{ estimate.source === 'ai' ? 'local AI' : 'standard estimate' }}</span>
+                        <span class="estimate-reason">{{ estimate.reason }}</span>
+                      }
+                      <button class="secondary estimate-button" [disabled]="aiLoading() !== null" (click)="getAiEstimate(order.id)">{{ aiLoading() === order.id ? 'Estimating…' : (aiEstimates()[order.id] ? '↻ Re-estimate' : '✦ Estimate time') }}</button>
+                    </div>
+                  }
                   <footer>
                     <small>{{ order.item_count }} {{ order.item_count === 1 ? 'item' : 'items' }} · up to {{ order.longest_preparation_minutes }} min</small>
                     <button class="primary advance" [disabled]="busy() !== null" (click)="advance(order, column)">{{ busy() === order.id ? 'Saving…' : column.action }}</button>

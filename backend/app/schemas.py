@@ -220,6 +220,13 @@ class KitchenOrder(BaseModel):
     items: list[OrderLine]
 
 
+class PrepTimeEstimate(BaseModel):
+    minutes: int
+    reason: str
+    source: Literal["ai", "fallback"]
+    orders_ahead: int
+
+
 class ReviewRequest(BaseModel):
     # No author or order fields: the author is the signed-in customer and the
     # order comes from the URL, so nobody can post as someone else.

@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException  # type: ignore
 
 from app.auth import require_staff
 from app.database import get_connection, now_text
+from app.prep_time import OrderNotFound, OrderNotOpen, estimate_for_order
 from app.routers.orders import load_order_items, order_line
-from app.schemas import KitchenOrder, StatusChange
+from app.schemas import KitchenOrder, PrepTimeEstimate, StatusChange
 
 # Every kitchen route is staff-only.
 router = APIRouter(prefix="/api/kitchen", tags=["Kitchen"], dependencies=[Depends(require_staff)])
@@ -60,3 +61,16 @@ def change_status(order_id: int, body: StatusChange, staff: dict = Depends(requi
             "INSERT INTO order_status_history (order_id, from_status, to_status, staff_id, changed_at) VALUES (?, ?, ?, ?, ?)",
             (order_id, body.from_status, body.to_status, staff["id"], now))
         return load(connection, "o.id = ?", (order_id,))[0]
+
+
+@router.post("/orders/{order_id}/estimate", response_model=PrepTimeEstimate)
+def prep_time_estimate(order_id: int):
+    """How long an open order still needs, estimated by the local model from its dishes and the queue.
+
+    Falls back to a formula when the model is unavailable, so the kitchen always gets an answer."""
+    try:
+        return estimate_for_order(order_id)
+    except OrderNotFound as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except OrderNotOpen as exc:
+        raise HTTPException(409, str(exc)) from exc

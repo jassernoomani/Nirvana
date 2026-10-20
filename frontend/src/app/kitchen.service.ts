@@ -16,13 +16,13 @@ export interface KitchenOrder {
   items: OrderLine[];
 }
 
-// --- NEW INTERFACE FOR THE AI ---
+/** AI preparation-time estimate; source 'fallback' when the local model could not answer. */
 export interface PrepEstimate {
   minutes: number;
   reason: string;
   source: 'ai' | 'fallback';
+  orders_ahead: number;
 }
-// -------------------------------
 
 @Injectable({ providedIn: 'root' })
 export class KitchenService {
@@ -37,8 +37,7 @@ export class KitchenService {
     return this.http.post<KitchenOrder>(`/api/kitchen/orders/${id}/status`, {from_status: fromStatus, to_status: toStatus});
   }
 
-  // --- NEW AI METHOD ---
   getPrepTimeEstimate(orderId: number) {
-    return this.http.post<PrepEstimate>(`/api/kitchen/estimate/${orderId}`, {});
+    return this.http.post<PrepEstimate>(`/api/kitchen/orders/${orderId}/estimate`, {});
   }
 }

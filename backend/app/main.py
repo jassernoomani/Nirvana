@@ -18,10 +18,6 @@ from app.routers.orders import router as orders_router
 from app.routers.ai import router as ai_router
 from app.routers.reservations import router as reservations_router
 
-# --- NEW IMPORTS FOR AI TESTING ---
-from app.prep_time import estimate_prep_time
-# ----------------------------------
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -71,24 +67,3 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
-
-
-# --- NEW AI ENDPOINT FOR THE KITCHEN BOARD ---
-@app.post("/api/kitchen/estimate/{order_id}")
-def get_kitchen_estimate(order_id: int):
-    """
-    Temporary endpoint to test the AI connection from the frontend.
-    Later, you should replace the mock data with real database queries.
-    """
-    # Mock data for testing
-    mock_items = [
-        {"name": "Burger", "prep_minutes": 15},
-        {"name": "Fries", "prep_minutes": 5}
-    ]
-    mock_queue = 3
-    mock_staff = 2
-    current_hour = "19:00"
-
-    # Call the function you wrote in prep_time.py
-    result = estimate_prep_time(mock_items, mock_queue, mock_staff, current_hour)
-    return result
